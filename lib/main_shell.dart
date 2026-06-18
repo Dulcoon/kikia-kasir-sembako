@@ -6,12 +6,18 @@ import '../features/dashboard/dashboard_screen.dart';
 import '../features/product/product_screen.dart';
 import '../features/report/report_screen.dart';
 import '../features/transaction/transaction_screen.dart';
+import 'core/services/update_service.dart';
 
 final mainShellIndexProvider = StateProvider<int>((ref) => 0);
 
-class MainShell extends ConsumerWidget {
+class MainShell extends ConsumerStatefulWidget {
   const MainShell({super.key});
 
+  @override
+  ConsumerState<MainShell> createState() => _MainShellState();
+}
+
+class _MainShellState extends ConsumerState<MainShell> {
   static const List<Widget> _pages = <Widget>[
     DashboardScreen(),
     ProductScreen(),
@@ -21,7 +27,15 @@ class MainShell extends ConsumerWidget {
   ];
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      UpdateService.checkForUpdate(context);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final index = ref.watch(mainShellIndexProvider);
 
     return Scaffold(
