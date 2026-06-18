@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../database/models.dart';
+import '../../core/utils/toast_helper.dart';
 import 'providers/category_provider.dart';
 
 class CategoryFormScreen extends ConsumerStatefulWidget {
@@ -51,9 +52,7 @@ class _CategoryFormScreenState extends ConsumerState<CategoryFormScreen> {
     } catch (e) {
       if (!mounted) return;
       setState(() => _saving = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString().replaceFirst('Exception: ', ''))),
-      );
+      ToastHelper.error(context, e.toString().replaceFirst('Exception: ', ''));
     }
   }
 

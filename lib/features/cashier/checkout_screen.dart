@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/helpers/formatters.dart';
+import '../../core/utils/toast_helper.dart';
 import 'providers/cashier_provider.dart';
 
 class CheckoutScreen extends ConsumerStatefulWidget {
@@ -45,11 +46,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
     final change = _payment - subtotal;
 
     if (_payment < subtotal) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-            content: const Text('Uang kurang!'),
-            backgroundColor: Theme.of(context).colorScheme.error),
-      );
+      ToastHelper.warning(context, 'Uang kurang!');
       return;
     }
 
@@ -70,11 +67,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
     } catch (e) {
       if (!mounted) return;
       setState(() => _loading = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-            content: Text(e.toString().replaceFirst('Exception: ', '')),
-            backgroundColor: Theme.of(context).colorScheme.error),
-      );
+      ToastHelper.error(context, e.toString().replaceFirst('Exception: ', ''));
     }
   }
 
@@ -369,11 +362,12 @@ class _SuccessScreen extends StatelessWidget {
                               ],
                             ),
                           ),
-                          // Divider dengan notch style
                           Row(
                             children: [
-                              const SizedBox(width: -12),
-                              _notchCircle(context, left: true),
+                              Transform.translate(
+                                offset: const Offset(-10, 0),
+                                child: _notchCircle(context, left: true),
+                              ),
                               Expanded(
                                 child: Container(
                                   height: 1,
@@ -381,8 +375,10 @@ class _SuccessScreen extends StatelessWidget {
                                   color: Theme.of(context).colorScheme.outlineVariant,
                                 ),
                               ),
-                              _notchCircle(context, left: false),
-                              const SizedBox(width: -12),
+                              Transform.translate(
+                                offset: const Offset(10, 0),
+                                child: _notchCircle(context, left: false),
+                              ),
                             ],
                           ),
                           // Detail rows

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart' as package_info_plus;
 import '../../core/theme/theme_provider.dart';
+import '../../core/utils/toast_helper.dart';
 import '../update/models/update_info.dart' as update_info;
 import '../update/services/update_service.dart';
 import '../update/widgets/update_dialog.dart' as update_dialog;
@@ -58,9 +59,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         );
 
     if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Pengaturan berhasil disimpan')),
-      );
+      ToastHelper.success(context, 'Pengaturan berhasil disimpan');
     }
   }
 
@@ -244,19 +243,12 @@ class _AppSettingsSectionState extends ConsumerState<_AppSettingsSection> {
                 update_dialog.UpdateDialog(updateInfo: updateInfo),
           );
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Aplikasi Anda sudah versi terbaru.')),
-          );
+          ToastHelper.info(context, 'Aplikasi Anda sudah versi terbaru.');
         }
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(e.toString().replaceAll('Exception: ', '')),
-            backgroundColor: Theme.of(context).colorScheme.error,
-          ),
-        );
+        ToastHelper.error(context, e.toString().replaceAll('Exception: ', ''));
       }
     } finally {
       if (mounted) {

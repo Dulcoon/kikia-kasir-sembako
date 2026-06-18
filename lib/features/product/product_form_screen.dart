@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../database/models.dart';
+import '../../core/utils/toast_helper.dart';
 import '../category/providers/category_provider.dart';
 import 'providers/product_provider.dart';
 
@@ -54,9 +55,7 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
     final categoryId = _categoryId;
 
     if (categoryId == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Pilih kategori terlebih dahulu')),
-      );
+      ToastHelper.warning(context, 'Pilih kategori terlebih dahulu');
       return;
     }
 

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/helpers/formatters.dart';
 import '../../database/models.dart';
+import '../../core/utils/toast_helper.dart';
 import '../product/providers/product_provider.dart';
 import '../settings/settings_screen.dart';
 import 'providers/cashier_provider.dart';
@@ -44,15 +45,7 @@ class _CashierScreenState extends ConsumerState<CashierScreen> {
     } catch (_) {}
 
     if (currentQty >= product.stock) {
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Stok ${product.name} habis (maksimal ${product.stock})'),
-          backgroundColor: Theme.of(context).colorScheme.error,
-          behavior: SnackBarBehavior.floating,
-          duration: const Duration(seconds: 2),
-        ),
-      );
+      ToastHelper.warning(context, 'Stok ${product.name} habis (maksimal ${product.stock})');
       return;
     }
 
@@ -464,15 +457,7 @@ class _CashierScreenState extends ConsumerState<CashierScreen> {
                                     icon: Icon(Icons.add, size: 20),
                                     onPressed: () {
                                       if (item.qty >= item.product.stock) {
-                                        ScaffoldMessenger.of(context).clearSnackBars();
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                          SnackBar(
-                                            content: Text('Stok ${item.product.name} habis (maksimal ${item.product.stock})'),
-                                            backgroundColor: Theme.of(context).colorScheme.error,
-                                            behavior: SnackBarBehavior.floating,
-                                            duration: const Duration(seconds: 2),
-                                          ),
-                                        );
+                                        ToastHelper.warning(context, 'Stok ${item.product.name} habis (maksimal ${item.product.stock})');
                                       } else {
                                         ref.read(cashierProvider.notifier).updateQty(i, item.qty + 1);
                                       }
