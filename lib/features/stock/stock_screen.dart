@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/constants/app_colors.dart';
 import '../../core/helpers/formatters.dart';
 import '../../database/models.dart';
 import '../product/providers/product_provider.dart';
@@ -22,28 +21,28 @@ class StockScreen extends ConsumerWidget {
         liveProductAsync.valueOrNull ?? product;
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: AppColors.surface,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         elevation: 0,
         scrolledUnderElevation: 0,
-        iconTheme: const IconThemeData(color: AppColors.textSecondary),
+        iconTheme: IconThemeData(color: Theme.of(context).colorScheme.onSurfaceVariant),
         title: Text(
           'Stok: ${displayProduct.name}',
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: AppColors.text,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _openAddStock(context, ref),
-        icon: const Icon(Icons.add),
+        icon: Icon(Icons.add),
         label: const Text(
           'Tambah Stok',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        backgroundColor: AppColors.primary,
+        backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Colors.white,
       ),
       body: Column(
@@ -59,7 +58,7 @@ class StockScreen extends ConsumerWidget {
               'Riwayat Stok',
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: AppColors.textSecondary,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
             ),
           ),
@@ -109,11 +108,11 @@ class _StockSummary extends StatelessWidget {
     final unit = product.unit ?? '';
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.primary,
+        color: Theme.of(context).colorScheme.primary,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withValues(alpha: 0.2),
+            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -136,7 +135,7 @@ class _StockSummary extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   '${product.stock}${unit.isNotEmpty ? ' $unit' : ''}',
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: Colors.white,
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
@@ -164,7 +163,7 @@ class _StockSummary extends StatelessWidget {
               const SizedBox(height: 4),
               Text(
                 Formatters.rupiah(product.costPrice),
-                style: const TextStyle(
+                style: TextStyle(
                   color: Colors.white,
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
@@ -197,38 +196,38 @@ class _HistoryTile extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.border.withValues(alpha: 0.5)),
+        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5)),
       ),
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
         leading: Container(
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-            color: isPositive ? AppColors.success.withValues(alpha: 0.1) : AppColors.danger.withValues(alpha: 0.1),
+            color: isPositive ? (Theme.of(context).brightness == Brightness.dark ? Color(0xFF4ADE80) : Color(0xFF16A34A)).withValues(alpha: 0.1) : Theme.of(context).colorScheme.error.withValues(alpha: 0.1),
             shape: BoxShape.circle,
           ),
           child: Icon(
             isPositive ? Icons.add : Icons.remove,
             size: 20,
-            color: isPositive ? AppColors.success : AppColors.danger,
+            color: isPositive ? (Theme.of(context).brightness == Brightness.dark ? Color(0xFF4ADE80) : Color(0xFF16A34A)) : Theme.of(context).colorScheme.error,
           ),
         ),
         title: Text(
           '$typeLabel: $qtyLabel',
-          style: const TextStyle(fontWeight: FontWeight.w600),
+          style: TextStyle(fontWeight: FontWeight.w600),
         ),
         subtitle: Text(
           history.note ?? Formatters.dateTime(history.createdAt),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: const TextStyle(color: AppColors.textSecondary),
+          style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
         ),
         trailing: Text(
           Formatters.dateTime(history.createdAt),
           style: theme.textTheme.bodySmall?.copyWith(
-            color: AppColors.textSecondary,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
         ),
       ),

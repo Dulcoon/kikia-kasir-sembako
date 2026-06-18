@@ -4,6 +4,7 @@ class PreferencesHelper {
   static const String keyStoreName = 'store_name';
   static const String keyStoreAddress = 'store_address';
   static const String keyStorePhone = 'store_phone';
+  static const String keyThemeMode = 'theme_mode';
 
   static Future<String> getStoreName() async {
     final prefs = await SharedPreferences.getInstance();
@@ -33,5 +34,15 @@ class PreferencesHelper {
   static Future<void> setStorePhone(String value) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(keyStorePhone, value);
+  }
+
+  static Future<String> getThemeMode() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(keyThemeMode) ?? 'system';
+  }
+
+  static Future<void> setThemeMode(String value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(keyThemeMode, value);
   }
 }

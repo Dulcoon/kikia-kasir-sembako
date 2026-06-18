@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/constants/app_colors.dart';
 import '../../database/models.dart';
 import 'category_form_screen.dart';
 import 'providers/category_provider.dart';
@@ -25,22 +24,22 @@ class CategoryScreen extends ConsumerWidget {
           return ListView(
             padding: const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 96),
             children: [
-              const Padding(
-                padding: EdgeInsets.only(bottom: 12),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 12),
                 child: Text(
                   'Kategori',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
-                    color: AppColors.text,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
               ),
               Container(
                 decoration: BoxDecoration(
-                  color: AppColors.surface,
+                  color: Theme.of(context).colorScheme.surface,
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: AppColors.border.withValues(alpha: 0.5)),
+                  border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5)),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withValues(alpha: 0.02),
@@ -55,11 +54,11 @@ class CategoryScreen extends ConsumerWidget {
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: categories.length,
-                    separatorBuilder: (_, _) => const Divider(
+                    separatorBuilder: (_, _) => Divider(
                       height: 1, 
                       indent: 0, 
                       endIndent: 0, 
-                      color: Color(0xFFE1E2ED),
+                      color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.3),
                     ),
                     itemBuilder: (_, i) => _CategoryTile(
                       category: categories[i],
@@ -74,15 +73,15 @@ class CategoryScreen extends ConsumerWidget {
         },
       ),
       floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: const Color(0xFFDBE1FF), // primary-fixed
-        foregroundColor: const Color(0xFF00174B), // on-primary-fixed
+        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+        foregroundColor: Theme.of(context).colorScheme.onPrimaryContainer,
         elevation: 0,
         focusElevation: 0,
         hoverElevation: 0,
         highlightElevation: 0,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         onPressed: () => _openAdd(context),
-        icon: const Icon(Icons.add),
+        icon: Icon(Icons.add),
         label: const Text('Kategori', style: TextStyle(fontWeight: FontWeight.w600)),
       ),
     );
@@ -123,7 +122,7 @@ class CategoryScreen extends ConsumerWidget {
             child: const Text('Batal'),
           ),
           FilledButton.tonal(
-            style: FilledButton.styleFrom(backgroundColor: AppColors.danger),
+            style: FilledButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.error),
             onPressed: () => Navigator.pop(context, true),
             child: const Text('Hapus', style: TextStyle(color: Colors.white)),
           ),
@@ -167,13 +166,13 @@ class _CategoryTile extends ConsumerWidget {
                 Container(
                   width: 48,
                   height: 48,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFFDBE1FF), // primary-fixed
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.primaryContainer,
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.label,
-                    color: AppColors.primary,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -185,18 +184,18 @@ class _CategoryTile extends ConsumerWidget {
                     children: [
                       Text(
                         category.name,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
-                          color: AppColors.text,
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                       ),
                       const SizedBox(height: 2),
                       Text(
                         '$count produk',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 12,
-                          color: AppColors.textSecondary,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                       ),
                     ],
@@ -206,13 +205,13 @@ class _CategoryTile extends ConsumerWidget {
                 // Delete button
                 IconButton(
                   onPressed: onDelete,
-                  icon: const Icon(Icons.delete),
-                  color: AppColors.textSecondary,
+                  icon: Icon(Icons.delete),
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                   iconSize: 20,
                   tooltip: 'Hapus',
                   splashRadius: 24,
-                  hoverColor: AppColors.danger.withValues(alpha: 0.1),
-                  highlightColor: AppColors.danger.withValues(alpha: 0.1),
+                  hoverColor: Theme.of(context).colorScheme.error.withValues(alpha: 0.1),
+                  highlightColor: Theme.of(context).colorScheme.error.withValues(alpha: 0.1),
                 ),
               ],
             ),
@@ -237,11 +236,11 @@ class _EmptyView extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: AppColors.textSecondary.withValues(alpha: 0.08),
+                color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.08),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.label_outline,
-                  size: 40, color: AppColors.textSecondary),
+              child: Icon(Icons.label_outline,
+                  size: 40, color: Theme.of(context).colorScheme.onSurfaceVariant),
             ),
             const SizedBox(height: 12),
             Text('Belum ada kategori',
@@ -250,9 +249,9 @@ class _EmptyView extends StatelessWidget {
                     .titleMedium
                     ?.copyWith(fontWeight: FontWeight.w600)),
             const SizedBox(height: 4),
-            const Text('Tambah kategori untuk mengelompokkan produk.',
+            Text('Tambah kategori untuk mengelompokkan produk.',
                 textAlign: TextAlign.center,
-                style: TextStyle(color: AppColors.textSecondary)),
+                style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
           ],
         ),
       ),

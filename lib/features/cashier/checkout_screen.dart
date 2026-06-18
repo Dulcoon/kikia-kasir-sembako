@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/constants/app_colors.dart';
 import '../../core/helpers/formatters.dart';
 import 'providers/cashier_provider.dart';
 
@@ -47,9 +46,9 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
 
     if (_payment < subtotal) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text('Uang kurang!'),
-            backgroundColor: AppColors.danger),
+        SnackBar(
+            content: const Text('Uang kurang!'),
+            backgroundColor: Theme.of(context).colorScheme.error),
       );
       return;
     }
@@ -74,7 +73,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
             content: Text(e.toString().replaceFirst('Exception: ', '')),
-            backgroundColor: AppColors.danger),
+            backgroundColor: Theme.of(context).colorScheme.error),
       );
     }
   }
@@ -112,7 +111,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                         .textTheme
                         .bodyMedium
                         ?.copyWith(
-                            color: AppColors.textSecondary,
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
                             letterSpacing: 1.2)),
                 const SizedBox(height: 4),
                 Text(Formatters.rupiah(subtotal),
@@ -121,20 +120,20 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                         .displaySmall
                         ?.copyWith(
                             fontWeight: FontWeight.w800,
-                            color: AppColors.text)),
+                            color: Theme.of(context).colorScheme.onSurface)),
               ],
             ),
           ),
           const SizedBox(height: 24),
           TextField(
             controller: _paymentCtrl,
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               labelText: 'Jumlah Tunai',
               prefixText: 'Rp ',
               prefixStyle: TextStyle(
                   fontSize: 18, fontWeight: FontWeight.w600),
             ),
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
             keyboardType: TextInputType.number,
             autofocus: true,
             onChanged: _onPaymentChanged,
@@ -165,10 +164,10 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                     height: 18,
                     child: CircularProgressIndicator(
                         strokeWidth: 2, color: Colors.white))
-                : const Icon(Icons.check_circle, size: 22),
+                : Icon(Icons.check_circle, size: 22),
             label: Text(
                 _loading ? 'Memproses...' : 'Selesaikan Transaksi',
-                style: const TextStyle(
+                style: TextStyle(
                     fontSize: 16, fontWeight: FontWeight.w700)),
             style: FilledButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 18),
@@ -210,11 +209,11 @@ class _ChangeCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: (isNegative ? AppColors.danger : AppColors.success)
+        color: (isNegative ? Theme.of(context).colorScheme.error : (Theme.of(context).brightness == Brightness.dark ? Color(0xFF4ADE80) : Color(0xFF16A34A)))
             .withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: (isNegative ? AppColors.danger : AppColors.success)
+          color: (isNegative ? Theme.of(context).colorScheme.error : (Theme.of(context).brightness == Brightness.dark ? Color(0xFF4ADE80) : Color(0xFF16A34A)))
               .withValues(alpha: 0.3),
         ),
       ),
@@ -222,20 +221,20 @@ class _ChangeCard extends StatelessWidget {
         children: [
           Icon(
             isNegative ? Icons.warning_amber : Icons.check_circle,
-            color: isNegative ? AppColors.danger : AppColors.success,
+            color: isNegative ? Theme.of(context).colorScheme.error : (Theme.of(context).brightness == Brightness.dark ? Color(0xFF4ADE80) : Color(0xFF16A34A)),
           ),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
               isNegative ? 'Kurang' : 'Kembalian',
-              style: const TextStyle(fontWeight: FontWeight.w600),
+              style: TextStyle(fontWeight: FontWeight.w600),
             ),
           ),
           Text(
             Formatters.rupiah(change.abs()),
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.w800,
-                  color: isNegative ? AppColors.danger : AppColors.success,
+                  color: isNegative ? Theme.of(context).colorScheme.error : (Theme.of(context).brightness == Brightness.dark ? Color(0xFF4ADE80) : Color(0xFF16A34A)),
                 ),
           ),
         ],
@@ -262,7 +261,7 @@ class _SuccessScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: Column(
           children: [
@@ -278,39 +277,39 @@ class _SuccessScreen extends StatelessWidget {
                       width: 88,
                       height: 88,
                       decoration: BoxDecoration(
-                        color: AppColors.success,
+                        color: (Theme.of(context).brightness == Brightness.dark ? Color(0xFF4ADE80) : Color(0xFF16A34A)),
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                            color: AppColors.success.withValues(alpha: 0.3),
+                            color: (Theme.of(context).brightness == Brightness.dark ? Color(0xFF4ADE80) : Color(0xFF16A34A)).withValues(alpha: 0.3),
                             blurRadius: 24,
                             offset: const Offset(0, 8),
                           ),
                         ],
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.check_rounded,
                         color: Colors.white,
                         size: 44,
                       ),
                     ),
                     const SizedBox(height: 20),
-                    const Text(
+                    Text(
                       'Pembayaran Berhasil',
                       style: TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.w800,
-                        color: AppColors.text,
+                        color: Theme.of(context).colorScheme.onSurface,
                         letterSpacing: -0.3,
                       ),
                     ),
                     const SizedBox(height: 6),
                     Text(
                       invoice,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w500,
-                        color: AppColors.textSecondary,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                         letterSpacing: 0.8,
                       ),
                     ),
@@ -318,10 +317,10 @@ class _SuccessScreen extends StatelessWidget {
                     // ── Receipt card ───────────────────────────────
                     Container(
                       decoration: BoxDecoration(
-                        color: AppColors.surface,
+                        color: Theme.of(context).colorScheme.surface,
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
-                          color: AppColors.border.withValues(alpha: 0.6),
+                          color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.6),
                         ),
                         boxShadow: [
                           BoxShadow(
@@ -339,7 +338,7 @@ class _SuccessScreen extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 20, vertical: 20),
                             decoration: BoxDecoration(
-                              color: AppColors.success.withValues(alpha: 0.06),
+                              color: (Theme.of(context).brightness == Brightness.dark ? Color(0xFF4ADE80) : Color(0xFF16A34A)).withValues(alpha: 0.06),
                               borderRadius: const BorderRadius.only(
                                 topLeft: Radius.circular(16),
                                 topRight: Radius.circular(16),
@@ -348,22 +347,22 @@ class _SuccessScreen extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text(
+                                Text(
                                   'TOTAL PEMBAYARAN',
                                   style: TextStyle(
                                     fontSize: 11,
                                     fontWeight: FontWeight.w600,
-                                    color: AppColors.textSecondary,
+                                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                                     letterSpacing: 1.0,
                                   ),
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
                                   Formatters.rupiah(subtotal),
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 28,
                                     fontWeight: FontWeight.w800,
-                                    color: AppColors.text,
+                                    color: Theme.of(context).colorScheme.onSurface,
                                     letterSpacing: -0.5,
                                   ),
                                 ),
@@ -374,15 +373,15 @@ class _SuccessScreen extends StatelessWidget {
                           Row(
                             children: [
                               const SizedBox(width: -12),
-                              _notchCircle(left: true),
+                              _notchCircle(context, left: true),
                               Expanded(
                                 child: Container(
                                   height: 1,
                                   margin: const EdgeInsets.symmetric(horizontal: 4),
-                                  color: AppColors.border,
+                                  color: Theme.of(context).colorScheme.outlineVariant,
                                 ),
                               ),
-                              _notchCircle(left: false),
+                              _notchCircle(context, left: false),
                               const SizedBox(width: -12),
                             ],
                           ),
@@ -399,7 +398,7 @@ class _SuccessScreen extends StatelessWidget {
                                 _DetailRow(
                                   label: 'Kembalian',
                                   value: Formatters.rupiah(change),
-                                  valueColor: AppColors.success,
+                                  valueColor: (Theme.of(context).brightness == Brightness.dark ? Color(0xFF4ADE80) : Color(0xFF16A34A)),
                                   valueBold: true,
                                 ),
                               ],
@@ -421,7 +420,7 @@ class _SuccessScreen extends StatelessWidget {
                 child: FilledButton(
                   onPressed: onDone,
                   style: FilledButton.styleFrom(
-                    backgroundColor: AppColors.primary,
+                    backgroundColor: Theme.of(context).colorScheme.primary,
                     padding: const EdgeInsets.symmetric(vertical: 18),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -444,14 +443,14 @@ class _SuccessScreen extends StatelessWidget {
     );
   }
 
-  Widget _notchCircle({required bool left}) {
+  Widget _notchCircle(BuildContext context, {required bool left}) {
     return Container(
       width: 20,
       height: 20,
       decoration: BoxDecoration(
-        color: AppColors.background,
+        color: Theme.of(context).scaffoldBackgroundColor,
         shape: BoxShape.circle,
-        border: Border.all(color: AppColors.border, width: 1),
+        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant, width: 1),
       ),
     );
   }
@@ -477,9 +476,9 @@ class _DetailRow extends StatelessWidget {
       children: [
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 14,
-            color: AppColors.textSecondary,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -488,7 +487,7 @@ class _DetailRow extends StatelessWidget {
           style: TextStyle(
             fontSize: 15,
             fontWeight: valueBold ? FontWeight.w700 : FontWeight.w600,
-            color: valueColor ?? AppColors.text,
+            color: valueColor ?? Theme.of(context).colorScheme.onSurface,
           ),
         ),
       ],

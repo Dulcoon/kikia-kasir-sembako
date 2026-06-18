@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../core/constants/app_colors.dart';
 import '../models/update_info.dart';
 import '../services/update_service.dart';
 
@@ -62,17 +61,17 @@ class _UpdateDialogState extends ConsumerState<UpdateDialog> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Row(
+              Row(
                 children: [
-                  Icon(Icons.system_update, color: AppColors.primary, size: 32),
-                  SizedBox(width: 12),
+                  Icon(Icons.system_update, color: Theme.of(context).colorScheme.primary, size: 32),
+                  const SizedBox(width: 12),
                   Expanded(
                     child: Text(
                       'Pembaruan Tersedia',
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        color: AppColors.text,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
                   ),
@@ -81,7 +80,7 @@ class _UpdateDialogState extends ConsumerState<UpdateDialog> {
               const SizedBox(height: 16),
               Text(
                 'Versi ${widget.updateInfo.version} sudah tersedia. ${widget.updateInfo.forceUpdate ? "Pembaruan ini wajib dilakukan." : "Apakah Anda ingin memperbarui sekarang?"}',
-                style: const TextStyle(color: AppColors.textSecondary),
+                style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
               ),
               const SizedBox(height: 16),
               if (widget.updateInfo.changelog.isNotEmpty) ...[
@@ -93,13 +92,13 @@ class _UpdateDialogState extends ConsumerState<UpdateDialog> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: AppColors.background,
+                    color: Theme.of(context).scaffoldBackgroundColor,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: widget.updateInfo.changelog
-                        .map((e) => Text('• $e', style: const TextStyle(fontSize: 13)))
+                        .map((e) => Text('• $e', style: TextStyle(fontSize: 13)))
                         .toList(),
                   ),
                 ),
@@ -110,18 +109,18 @@ class _UpdateDialogState extends ConsumerState<UpdateDialog> {
                  Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: AppColors.danger.withValues(alpha: 0.1),
+                    color: Theme.of(context).colorScheme.error.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: AppColors.danger.withValues(alpha: 0.3)),
+                    border: Border.all(color: Theme.of(context).colorScheme.error.withValues(alpha: 0.3)),
                   ),
                   child: Row(
                     children: [
-                      const Icon(Icons.error_outline, color: AppColors.danger, size: 20),
+                      Icon(Icons.error_outline, color: Theme.of(context).colorScheme.error, size: 20),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
                           _error!,
-                          style: const TextStyle(color: AppColors.danger, fontSize: 13),
+                          style: TextStyle(color: Theme.of(context).colorScheme.error, fontSize: 13),
                         ),
                       ),
                     ],
@@ -134,13 +133,13 @@ class _UpdateDialogState extends ConsumerState<UpdateDialog> {
                 Text(
                   'Mengunduh... ${(_progress * 100).toStringAsFixed(0)}%',
                   textAlign: TextAlign.center,
-                  style: const TextStyle(fontWeight: FontWeight.w600),
+                  style: TextStyle(fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 8),
                 LinearProgressIndicator(
                   value: _progress,
-                  backgroundColor: AppColors.border,
-                  color: AppColors.primary,
+                  backgroundColor: Theme.of(context).colorScheme.outlineVariant,
+                  color: Theme.of(context).colorScheme.primary,
                   minHeight: 8,
                   borderRadius: BorderRadius.circular(4),
                 ),
@@ -151,11 +150,11 @@ class _UpdateDialogState extends ConsumerState<UpdateDialog> {
                     if (!widget.updateInfo.forceUpdate)
                       TextButton(
                         onPressed: () => Navigator.of(context).pop(),
-                        child: const Text('Nanti Saja', style: TextStyle(color: AppColors.textSecondary)),
+                        child: Text('Nanti Saja', style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
                       ),
                     const SizedBox(width: 8),
                     FilledButton(
-                      style: FilledButton.styleFrom(backgroundColor: AppColors.primary),
+                      style: FilledButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.primary),
                       onPressed: _startUpdate,
                       child: const Text('Update Sekarang'),
                     ),

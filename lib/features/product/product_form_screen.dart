@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/constants/app_colors.dart';
 import '../../database/models.dart';
 import '../category/providers/category_provider.dart';
 import 'providers/product_provider.dart';
@@ -88,17 +87,17 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
     final categoriesAsync = ref.watch(categoryListProvider);
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: AppColors.surface,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         elevation: 0,
         scrolledUnderElevation: 0,
-        iconTheme: const IconThemeData(color: AppColors.textSecondary),
+        iconTheme: IconThemeData(color: Theme.of(context).colorScheme.onSurfaceVariant),
         title: Text(
           isEditing ? 'Edit Barang' : 'Tambah Barang',
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: AppColors.text,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
         ),
       ),
@@ -109,9 +108,9 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
           children: [
             Container(
               decoration: BoxDecoration(
-                color: AppColors.surface,
+                color: Theme.of(context).colorScheme.surface,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppColors.border.withValues(alpha: 0.5)),
+                border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5)),
               ),
               padding: const EdgeInsets.all(16),
               child: Column(
@@ -119,7 +118,7 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
                 children: [
                   TextFormField(
                     controller: _nameCtrl,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: 'Nama Barang',
                       border: OutlineInputBorder(),
                     ),
@@ -132,7 +131,7 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
                       Expanded(
                         child: TextFormField(
                           controller: _costCtrl,
-                          decoration: const InputDecoration(
+                          decoration: InputDecoration(
                             labelText: 'Harga Modal',
                             prefixText: 'Rp ',
                             border: OutlineInputBorder(),
@@ -149,7 +148,7 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
                       Expanded(
                         child: TextFormField(
                           controller: _sellCtrl,
-                          decoration: const InputDecoration(
+                          decoration: InputDecoration(
                             labelText: 'Harga Jual',
                             prefixText: 'Rp ',
                             border: OutlineInputBorder(),
@@ -167,7 +166,7 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: _unitCtrl,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: 'Satuan (kg, pcs, bks...)',
                       border: OutlineInputBorder(),
                     ),
@@ -183,7 +182,7 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
                       if (categories.isEmpty) {
                         return TextFormField(
                           enabled: false,
-                          decoration: const InputDecoration(
+                          decoration: InputDecoration(
                             labelText: 'Kategori',
                             helperText: 'Tambah kategori dulu di tab Kategori',
                             border: OutlineInputBorder(),
@@ -193,7 +192,7 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
                       _categoryId ??= categories.first.id;
                       return DropdownButtonFormField<String>(
                         initialValue: _categoryId,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           labelText: 'Kategori',
                           border: OutlineInputBorder(),
                         ),
@@ -215,16 +214,16 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
               height: 48,
               child: FilledButton.icon(
                 style: FilledButton.styleFrom(
-                  backgroundColor: AppColors.primary,
+                  backgroundColor: Theme.of(context).colorScheme.primary,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
                 onPressed: _save,
-                icon: const Icon(Icons.save),
+                icon: Icon(Icons.save),
                 label: Text(
                   isEditing ? 'Simpan Perubahan' : 'Simpan Barang',
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                  style: TextStyle(fontWeight: FontWeight.bold),
                 ),
               ),
             ),

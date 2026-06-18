@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/constants/app_colors.dart';
 import '../../core/helpers/formatters.dart';
 import '../../database/models.dart';
 import 'providers/transaction_provider.dart';
@@ -15,9 +14,9 @@ class TransactionScreen extends ConsumerWidget {
     final asyncTx = ref.watch(transactionListProvider);
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: AppColors.surface,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         elevation: 0,
         scrolledUnderElevation: 0,
         toolbarHeight: 64,
@@ -25,7 +24,7 @@ class TransactionScreen extends ConsumerWidget {
           'Riwayat Transaksi',
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: AppColors.text,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
         ),
       ),
@@ -45,9 +44,9 @@ class TransactionScreen extends ConsumerWidget {
                   children: [
                     Container(
                       decoration: BoxDecoration(
-                        color: AppColors.surface,
+                        color: Theme.of(context).colorScheme.surface,
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: AppColors.border.withValues(alpha: 0.5)),
+                        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5)),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withValues(alpha: 0.02),
@@ -62,11 +61,11 @@ class TransactionScreen extends ConsumerWidget {
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
                           itemCount: transactions.length,
-                          separatorBuilder: (_, _) => const Divider(
+                          separatorBuilder: (_, _) => Divider(
                             height: 1, 
                             indent: 0, 
                             endIndent: 0, 
-                            color: Color(0xFFE1E2ED),
+                            color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.3),
                           ),
                           itemBuilder: (_, i) => _TransactionTile(
                             transaction: transactions[i],
@@ -114,13 +113,13 @@ class _TransactionTile extends StatelessWidget {
             Container(
               width: 48,
               height: 48,
-              decoration: const BoxDecoration(
-                color: Color(0xFFDBE1FF), // primary-fixed
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primaryContainer,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.receipt_long,
-                color: AppColors.primary,
+                color: Theme.of(context).colorScheme.primary,
               ),
             ),
             const SizedBox(width: 16),
@@ -130,18 +129,18 @@ class _TransactionTile extends StatelessWidget {
                 children: [
                   Text(
                     transaction.invoiceNumber,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: AppColors.text,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     Formatters.dateTime(transaction.createdAt),
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 12,
-                      color: AppColors.textSecondary,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                   ),
                 ],
@@ -149,10 +148,10 @@ class _TransactionTile extends StatelessWidget {
             ),
             Text(
               Formatters.rupiah(transaction.subtotal),
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: AppColors.text,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
           ],
@@ -174,31 +173,31 @@ class _EmptyView extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: 0.1),
+              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
-            child: const Icon(
+            child: Icon(
               Icons.receipt_long_outlined,
               size: 48,
-              color: AppColors.primary,
+              color: Theme.of(context).colorScheme.primary,
             ),
           ),
           const SizedBox(height: 24),
-          const Text(
+          Text(
             'Belum Ada Transaksi',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: AppColors.text,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: 8),
-          const Text(
+          Text(
             'Transaksi yang sudah selesai\nakan tampil di sini.',
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 14,
-              color: AppColors.textSecondary,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
               height: 1.5,
             ),
           ),
@@ -266,27 +265,26 @@ class _FilterBar extends ConsumerWidget {
                 builder: (context, child) {
                   return Theme(
                     data: Theme.of(context).copyWith(
-                      colorScheme: const ColorScheme.light(
-                        primary: AppColors.primary,
-                        onPrimary: Colors.white,
-                        surface: AppColors.surface,
-                        onSurface: AppColors.text,
-                        secondary: AppColors.primary,
+                      colorScheme: Theme.of(context).colorScheme.copyWith(
+                        primary: Theme.of(context).colorScheme.primary,
+                        onPrimary: Theme.of(context).colorScheme.onPrimary,
+                        surface: Theme.of(context).colorScheme.surface,
+                        onSurface: Theme.of(context).colorScheme.onSurface,
+                        secondary: Theme.of(context).colorScheme.primary,
                       ),
-                      dialogBackgroundColor: AppColors.surface,
                       datePickerTheme: DatePickerThemeData(
-                        backgroundColor: AppColors.surface,
-                        headerBackgroundColor: AppColors.primary,
-                        headerForegroundColor: Colors.white,
+                        backgroundColor: Theme.of(context).colorScheme.surface,
+                        headerBackgroundColor: Theme.of(context).colorScheme.primary,
+                        headerForegroundColor: Theme.of(context).colorScheme.onPrimary,
                         elevation: 0,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(24),
                         ),
-                        dayStyle: const TextStyle(
+                        dayStyle: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
                         ),
-                        yearStyle: const TextStyle(
+                        yearStyle: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
                         ),
@@ -332,10 +330,10 @@ class _FilterChip extends StatelessWidget {
           duration: const Duration(milliseconds: 200),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           decoration: BoxDecoration(
-            color: isSelected ? AppColors.primary : AppColors.surface,
+            color: isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(24),
             border: Border.all(
-              color: isSelected ? AppColors.primary : AppColors.border,
+              color: isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.outlineVariant,
             ),
           ),
           child: Row(
@@ -345,7 +343,7 @@ class _FilterChip extends StatelessWidget {
                 Icon(
                   icon,
                   size: 16,
-                  color: isSelected ? Colors.white : AppColors.textSecondary,
+                  color: isSelected ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
                 const SizedBox(width: 6),
               ],
@@ -354,7 +352,7 @@ class _FilterChip extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                  color: isSelected ? Colors.white : AppColors.textSecondary,
+                  color: isSelected ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
               ),
             ],

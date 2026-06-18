@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/constants/app_colors.dart';
 import '../../core/helpers/formatters.dart';
 import '../../database/models.dart';
 import 'providers/report_provider.dart';
@@ -15,9 +14,9 @@ class ReportScreen extends ConsumerWidget {
     final asyncData = ref.watch(reportProvider);
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: AppColors.surface,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         elevation: 0,
         scrolledUnderElevation: 0,
         toolbarHeight: 64,
@@ -25,7 +24,7 @@ class ReportScreen extends ConsumerWidget {
           'Laporan',
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: AppColors.text,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
         ),
       ),
@@ -46,32 +45,32 @@ class ReportScreen extends ConsumerWidget {
                 label: 'Omzet',
                 value: Formatters.rupiah(data.revenue),
                 icon: Icons.trending_up_rounded,
-                color: AppColors.primary,
-                bgColor: AppColors.primary.withValues(alpha: 0.1),
+                color: Theme.of(context).colorScheme.primary,
+                bgColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
               ),
               const SizedBox(height: 12),
               _StatCard(
                 label: 'Profit',
                 value: Formatters.rupiah(data.profit),
                 icon: Icons.account_balance_wallet_rounded,
-                color: AppColors.success,
-                bgColor: AppColors.success.withValues(alpha: 0.1),
+                color: (Theme.of(context).brightness == Brightness.dark ? Color(0xFF4ADE80) : Color(0xFF16A34A)),
+                bgColor: (Theme.of(context).brightness == Brightness.dark ? Color(0xFF4ADE80) : Color(0xFF16A34A)).withValues(alpha: 0.1),
               ),
               const SizedBox(height: 12),
               _StatCard(
                 label: 'Jumlah Transaksi',
                 value: '${data.transactionCount}',
                 icon: Icons.receipt_long_rounded,
-                color: AppColors.warning,
-                bgColor: AppColors.warning.withValues(alpha: 0.1),
+                color: (Theme.of(context).brightness == Brightness.dark ? Color(0xFFFBBF24) : Color(0xFFD97706)),
+                bgColor: (Theme.of(context).brightness == Brightness.dark ? Color(0xFFFBBF24) : Color(0xFFD97706)).withValues(alpha: 0.1),
               ),
               const SizedBox(height: 24),
-              const Text(
+              Text(
                 'Produk Terlaris',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: AppColors.text,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
               const SizedBox(height: 12),
@@ -79,23 +78,23 @@ class ReportScreen extends ConsumerWidget {
                 Container(
                   padding: const EdgeInsets.all(32),
                   decoration: BoxDecoration(
-                    color: AppColors.surface,
+                    color: Theme.of(context).colorScheme.surface,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: AppColors.border.withValues(alpha: 0.5)),
+                    border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5)),
                   ),
-                  child: const Center(
+                  child: Center(
                     child: Text(
                       'Belum ada data penjualan.',
-                      style: TextStyle(color: AppColors.textSecondary),
+                      style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
                     ),
                   ),
                 )
               else
                 Container(
                   decoration: BoxDecoration(
-                    color: AppColors.surface,
+                    color: Theme.of(context).colorScheme.surface,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: AppColors.border.withValues(alpha: 0.5)),
+                    border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5)),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withValues(alpha: 0.02),
@@ -110,11 +109,11 @@ class ReportScreen extends ConsumerWidget {
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       itemCount: data.topProducts.length,
-                      separatorBuilder: (_, _) => const Divider(
+                      separatorBuilder: (_, _) => Divider(
                         height: 1,
                         indent: 0,
                         endIndent: 0,
-                        color: AppColors.border,
+                        color: Theme.of(context).colorScheme.outlineVariant,
                       ),
                       itemBuilder: (_, i) => _TopProductTile(
                         rank: i + 1,
@@ -142,9 +141,9 @@ class _FilterBar extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.border.withValues(alpha: 0.5)),
+        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5)),
       ),
       child: Row(
         children: ReportFilter.values.map((f) {
@@ -163,7 +162,7 @@ class _FilterBar extends StatelessWidget {
                 duration: const Duration(milliseconds: 200),
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 decoration: BoxDecoration(
-                  color: selected ? AppColors.primary : Colors.transparent,
+                  color: selected ? Theme.of(context).colorScheme.primary : Colors.transparent,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
@@ -172,7 +171,7 @@ class _FilterBar extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
-                    color: selected ? Colors.white : AppColors.textSecondary,
+                    color: selected ? Colors.white : Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                 ),
               ),
@@ -204,9 +203,9 @@ class _StatCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.border.withValues(alpha: 0.5)),
+        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.02),
@@ -232,19 +231,19 @@ class _StatCard extends StatelessWidget {
               children: [
                 Text(
                   label,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 13,
-                    color: AppColors.textSecondary,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   value,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.text,
+                    color: Theme.of(context).colorScheme.onSurface,
                     letterSpacing: -0.5,
                   ),
                 ),
@@ -263,26 +262,23 @@ class _TopProductTile extends StatelessWidget {
 
   const _TopProductTile({required this.rank, required this.product});
 
-  Color get _rankColor {
-    return switch (rank) {
-      1 => const Color(0xFFF59E0B), // emas
-      2 => const Color(0xFF94A3B8), // perak
-      3 => const Color(0xFFCD7C2F), // perunggu
-      _ => AppColors.textSecondary,
-    };
-  }
-
-  Color get _rankBgColor {
-    return switch (rank) {
-      1 => const Color(0xFFFEF3C7),
-      2 => const Color(0xFFF1F5F9),
-      3 => const Color(0xFFFDF2E9),
-      _ => AppColors.background,
-    };
-  }
-
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final rankColor = switch (rank) {
+      1 => isDark ? const Color(0xFFFBBF24) : const Color(0xFFF59E0B), // emas
+      2 => isDark ? const Color(0xFFCBD5E1) : const Color(0xFF94A3B8), // perak
+      3 => isDark ? const Color(0xFFFB923C) : const Color(0xFFCD7C2F), // perunggu
+      _ => Theme.of(context).colorScheme.onSurfaceVariant,
+    };
+
+    final rankBgColor = switch (rank) {
+      1 => isDark ? const Color(0xFF78350F) : const Color(0xFFFEF3C7),
+      2 => isDark ? const Color(0xFF334155) : const Color(0xFFF1F5F9),
+      3 => isDark ? const Color(0xFF7C2D12) : const Color(0xFFFDF2E9),
+      _ => Theme.of(context).scaffoldBackgroundColor,
+    };
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Row(
@@ -292,7 +288,7 @@ class _TopProductTile extends StatelessWidget {
             height: 32,
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: _rankBgColor,
+              color: rankBgColor,
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
@@ -300,7 +296,7 @@ class _TopProductTile extends StatelessWidget {
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
-                color: _rankColor,
+                color: rankColor,
               ),
             ),
           ),
@@ -311,17 +307,17 @@ class _TopProductTile extends StatelessWidget {
               children: [
                 Text(
                   product.productName,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.text,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
                 Text(
                   '${product.totalQty} terjual',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 12,
-                    color: AppColors.textSecondary,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                 ),
               ],
@@ -329,10 +325,10 @@ class _TopProductTile extends StatelessWidget {
           ),
           Text(
             Formatters.rupiah(product.totalProfit),
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.bold,
-              color: AppColors.success,
+              color: (Theme.of(context).brightness == Brightness.dark ? Color(0xFF4ADE80) : Color(0xFF16A34A)),
             ),
           ),
         ],

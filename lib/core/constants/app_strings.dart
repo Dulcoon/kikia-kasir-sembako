@@ -1,7 +1,7 @@
 class AppStrings {
   AppStrings._();
 
-  static const String appName = 'WarungKasir';
+  static const String appName = 'KikiaStore';
 
   static const String navDashboard = 'Dashboard';
   static const String navProduct = 'Barang';

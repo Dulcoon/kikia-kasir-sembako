@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/constants/app_colors.dart';
 import '../../core/helpers/formatters.dart';
 import '../../database/models.dart';
 import '../product/providers/product_provider.dart';
@@ -49,7 +48,7 @@ class _CashierScreenState extends ConsumerState<CashierScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Stok ${product.name} habis (maksimal ${product.stock})'),
-          backgroundColor: AppColors.danger,
+          backgroundColor: Theme.of(context).colorScheme.error,
           behavior: SnackBarBehavior.floating,
           duration: const Duration(seconds: 2),
         ),
@@ -88,28 +87,28 @@ class _CashierScreenState extends ConsumerState<CashierScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: AppColors.surface,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         elevation: 0,
         scrolledUnderElevation: 0,
         toolbarHeight: 64,
         title: Row(
           children: [
-            const Icon(Icons.storefront_outlined, color: AppColors.primary, size: 28),
+            Icon(Icons.storefront_outlined, color: Theme.of(context).colorScheme.primary, size: 28),
             const SizedBox(width: 12),
             Text(
               'KikiaStore',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: AppColors.primary,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
             ),
           ],
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.account_circle_outlined, color: AppColors.textSecondary, size: 28),
+            icon: Icon(Icons.account_circle_outlined, color: Theme.of(context).colorScheme.onSurfaceVariant, size: 28),
             onPressed: () {
               Navigator.push(context, MaterialPageRoute(builder: (_) => const SettingsScreen()));
             },
@@ -118,7 +117,7 @@ class _CashierScreenState extends ConsumerState<CashierScreen> {
         ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
-          child: Container(color: AppColors.border.withValues(alpha: 0.5), height: 1),
+          child: Container(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), height: 1),
         ),
       ),
       body: LayoutBuilder(
@@ -132,7 +131,7 @@ class _CashierScreenState extends ConsumerState<CashierScreen> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       _buildSearchBar(),
-                      Container(height: 1, color: AppColors.border.withValues(alpha: 0.5)),
+                      Container(height: 1, color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5)),
                       Expanded(child: _buildProductGrid()),
                     ],
                   ),
@@ -140,8 +139,8 @@ class _CashierScreenState extends ConsumerState<CashierScreen> {
                 Container(
                   width: 420,
                   decoration: BoxDecoration(
-                    color: AppColors.surface,
-                    border: Border(left: BorderSide(color: AppColors.border.withValues(alpha: 0.5))),
+                    color: Theme.of(context).colorScheme.surface,
+                    border: Border(left: BorderSide(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5))),
                   ),
                   child: _buildRightPane(isMobile: false),
                 ),
@@ -152,7 +151,7 @@ class _CashierScreenState extends ConsumerState<CashierScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 _buildSearchBar(),
-                Container(height: 1, color: AppColors.border.withValues(alpha: 0.5)),
+                Container(height: 1, color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5)),
                 Expanded(
                   child: LayoutBuilder(
                     builder: (context, gridConstraints) {
@@ -173,8 +172,8 @@ class _CashierScreenState extends ConsumerState<CashierScreen> {
                             height: _isCartExpanded ? expandedHeight : collapsedHeight,
                             child: Container(
                               decoration: BoxDecoration(
-                                color: AppColors.surface,
-                                border: Border(top: BorderSide(color: AppColors.border.withValues(alpha: 0.5))),
+                                color: Theme.of(context).colorScheme.surface,
+                                border: Border(top: BorderSide(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5))),
                                 boxShadow: [
                                   BoxShadow(
                                     color: Colors.black.withValues(alpha: 0.05),
@@ -206,33 +205,33 @@ class _CashierScreenState extends ConsumerState<CashierScreen> {
   Widget _buildSearchBar() {
     return Container(
       padding: const EdgeInsets.all(16),
-      color: AppColors.surface,
+      color: Theme.of(context).colorScheme.surface,
       child: TextField(
         controller: _searchCtrl,
         focusNode: _searchFocus,
         decoration: InputDecoration(
           hintText: 'Cari Nama Barang...',
-          prefixIcon: const Icon(Icons.search, color: AppColors.textSecondary),
+          prefixIcon: Icon(Icons.search, color: Theme.of(context).colorScheme.onSurfaceVariant),
           suffixIcon: _query.isNotEmpty
               ? IconButton(
-                  icon: const Icon(Icons.close),
+                  icon: Icon(Icons.close),
                   onPressed: _clearSearch,
                 )
               : null,
           filled: true,
-          fillColor: AppColors.surface,
+          fillColor: Theme.of(context).colorScheme.surface,
           contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: AppColors.border.withValues(alpha: 0.8), width: 1.5),
+            borderSide: BorderSide(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.8), width: 1.5),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: AppColors.border.withValues(alpha: 0.8), width: 1.5),
+            borderSide: BorderSide(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.8), width: 1.5),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: AppColors.primary, width: 2),
+            borderSide: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2),
           ),
         ),
         onChanged: _onSearchChanged,
@@ -245,29 +244,29 @@ class _CashierScreenState extends ConsumerState<CashierScreen> {
     final cashierState = ref.watch(cashierProvider);
 
     return Container(
-      color: AppColors.background, // F8FAFC background for the grid area
+      color: Theme.of(context).scaffoldBackgroundColor, // F8FAFC background for the grid area
       child: productsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text('Error: $e')),
         data: (products) {
           if (products.isEmpty) {
-            return const Center(
+            return Center(
               child: Text(
                 'Belum ada barang.\nSilakan tambah barang di menu Barang.',
                 textAlign: TextAlign.center,
-                style: TextStyle(color: AppColors.textSecondary),
+                style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
               ),
             );
           }
           return ListView(
             padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16 + bottomPadding),
             children: [
-              const Text(
+              Text(
                 'PILIH CEPAT',
                 style: TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
-                  color: AppColors.textSecondary,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                   letterSpacing: 1.2,
                 ),
               ),
@@ -314,7 +313,7 @@ class _CashierScreenState extends ConsumerState<CashierScreen> {
               if (details.delta.dy > 5) setState(() => _isCartExpanded = false);
             },
             child: Container(
-              color: AppColors.surface, // Background for drag handle
+              color: Theme.of(context).colorScheme.surface, // Background for drag handle
               width: double.infinity,
               padding: const EdgeInsets.only(top: 12, bottom: 4),
               child: Center(
@@ -322,7 +321,7 @@ class _CashierScreenState extends ConsumerState<CashierScreen> {
                   width: 48,
                   height: 5,
                   decoration: BoxDecoration(
-                    color: AppColors.border.withValues(alpha: 0.8),
+                    color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.8),
                     borderRadius: BorderRadius.circular(2.5),
                   ),
                 ),
@@ -337,28 +336,28 @@ class _CashierScreenState extends ConsumerState<CashierScreen> {
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: isMobile ? 8 : 12),
             decoration: BoxDecoration(
-              border: Border(bottom: BorderSide(color: AppColors.border.withValues(alpha: 0.5))),
+              border: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5))),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Row(
                   children: [
-                    const Icon(Icons.shopping_cart_outlined, color: AppColors.primary, size: 26),
+                    Icon(Icons.shopping_cart_outlined, color: Theme.of(context).colorScheme.primary, size: 26),
                     const SizedBox(width: 8),
                     Text(
                       'Keranjang (${cart.length})',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.w600,
-                        color: AppColors.text,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
                     if (isMobile) ...[
                       const SizedBox(width: 4),
                       Icon(
                         _isCartExpanded ? Icons.expand_more : Icons.expand_less,
-                        color: AppColors.textSecondary,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                         size: 20,
                       )
                     ]
@@ -368,10 +367,10 @@ class _CashierScreenState extends ConsumerState<CashierScreen> {
                   onPressed: cart.isEmpty
                       ? null
                       : () => ref.read(cashierProvider.notifier).clearCart(),
-                  icon: const Icon(Icons.delete_sweep_outlined, size: 20),
+                  icon: Icon(Icons.delete_sweep_outlined, size: 20),
                   label: const Text('Kosongkan', style: TextStyle(fontWeight: FontWeight.w600)),
                   style: TextButton.styleFrom(
-                    foregroundColor: AppColors.danger,
+                    foregroundColor: Theme.of(context).colorScheme.error,
                   ),
                 ),
               ],
@@ -382,12 +381,12 @@ class _CashierScreenState extends ConsumerState<CashierScreen> {
         // Cart Items
         Expanded(
           child: Container(
-            color: AppColors.surface,
+            color: Theme.of(context).colorScheme.surface,
             child: cart.isEmpty
-                ? const Center(
+                ? Center(
                     child: Text(
                       'Keranjang kosong',
-                      style: TextStyle(color: AppColors.textSecondary),
+                      style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
                     ),
                   )
                 : ListView.builder(
@@ -399,9 +398,9 @@ class _CashierScreenState extends ConsumerState<CashierScreen> {
                         margin: const EdgeInsets.only(bottom: 12),
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: AppColors.surface,
+                          color: Theme.of(context).colorScheme.surface,
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: AppColors.border.withValues(alpha: 0.6)),
+                          border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.6)),
                         ),
                         child: Row(
                           children: [
@@ -413,19 +412,19 @@ class _CashierScreenState extends ConsumerState<CashierScreen> {
                                     item.product.name,
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w500,
-                                      color: AppColors.text,
+                                      color: Theme.of(context).colorScheme.onSurface,
                                     ),
                                   ),
                                   const SizedBox(height: 6),
                                   Text(
                                     Formatters.rupiah(item.product.sellingPrice),
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500,
-                                      color: AppColors.primary,
+                                      color: Theme.of(context).colorScheme.primary,
                                     ),
                                   ),
                                 ],
@@ -436,40 +435,40 @@ class _CashierScreenState extends ConsumerState<CashierScreen> {
                             Container(
                               height: 40,
                               decoration: BoxDecoration(
-                                color: const Color(0xFFF3F3FE), // Sangat light blue/purple
+                                color: Theme.of(context).colorScheme.secondaryContainer,
                                 borderRadius: BorderRadius.circular(20),
                               ),
                               child: Row(
                                 children: [
                                   IconButton(
-                                    icon: const Icon(Icons.remove, size: 20),
+                                    icon: Icon(Icons.remove, size: 20),
                                     onPressed: () => ref
                                         .read(cashierProvider.notifier)
                                         .updateQty(i, item.qty - 1),
-                                    color: AppColors.text,
+                                    color: Theme.of(context).colorScheme.onSurface,
                                     padding: EdgeInsets.zero,
-                                    constraints: const BoxConstraints(minWidth: 40),
+                                    constraints: BoxConstraints(minWidth: 40),
                                   ),
                                   SizedBox(
                                     width: 24,
                                     child: Text(
                                       '${item.qty}',
                                       textAlign: TextAlign.center,
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.w500,
                                       ),
                                     ),
                                   ),
                                   IconButton(
-                                    icon: const Icon(Icons.add, size: 20),
+                                    icon: Icon(Icons.add, size: 20),
                                     onPressed: () {
                                       if (item.qty >= item.product.stock) {
                                         ScaffoldMessenger.of(context).clearSnackBars();
                                         ScaffoldMessenger.of(context).showSnackBar(
                                           SnackBar(
                                             content: Text('Stok ${item.product.name} habis (maksimal ${item.product.stock})'),
-                                            backgroundColor: AppColors.danger,
+                                            backgroundColor: Theme.of(context).colorScheme.error,
                                             behavior: SnackBarBehavior.floating,
                                             duration: const Duration(seconds: 2),
                                           ),
@@ -478,18 +477,18 @@ class _CashierScreenState extends ConsumerState<CashierScreen> {
                                         ref.read(cashierProvider.notifier).updateQty(i, item.qty + 1);
                                       }
                                     },
-                                    color: AppColors.primary,
+                                    color: Theme.of(context).colorScheme.primary,
                                     padding: EdgeInsets.zero,
-                                    constraints: const BoxConstraints(minWidth: 40),
+                                    constraints: BoxConstraints(minWidth: 40),
                                   ),
                                 ],
                               ),
                             ),
                             const SizedBox(width: 8),
                             IconButton(
-                              icon: const Icon(Icons.delete_outline),
+                              icon: Icon(Icons.delete_outline),
                               onPressed: () => ref.read(cashierProvider.notifier).removeItem(i),
-                              color: AppColors.textSecondary,
+                              color: Theme.of(context).colorScheme.onSurfaceVariant,
                             ),
                           ],
                         ),
@@ -503,8 +502,8 @@ class _CashierScreenState extends ConsumerState<CashierScreen> {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           decoration: BoxDecoration(
-            color: AppColors.surface,
-            border: Border(top: BorderSide(color: AppColors.border.withValues(alpha: 0.5))),
+            color: Theme.of(context).colorScheme.surface,
+            border: Border(top: BorderSide(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5))),
           ),
           child: Column(
             children: [
@@ -513,21 +512,21 @@ class _CashierScreenState extends ConsumerState<CashierScreen> {
                 crossAxisAlignment: CrossAxisAlignment.baseline,
                 textBaseline: TextBaseline.alphabetic,
                 children: [
-                  const Text(
+                  Text(
                     'TOTAL',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w600,
-                      color: AppColors.textSecondary,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                       letterSpacing: 1.0,
                     ),
                   ),
                   Text(
                     Formatters.rupiah(subtotal),
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 36,
                       fontWeight: FontWeight.bold,
-                      color: AppColors.primary,
+                      color: Theme.of(context).colorScheme.primary,
                       letterSpacing: -1.0,
                     ),
                   ),
@@ -539,13 +538,14 @@ class _CashierScreenState extends ConsumerState<CashierScreen> {
                 height: 64,
                 child: FilledButton.icon(
                   onPressed: subtotal <= 0 ? null : _openCheckout,
-                  icon: const Icon(Icons.payments_outlined, size: 28),
+                  icon: Icon(Icons.payments_outlined, size: 28),
                   label: const Text(
                     'Bayar',
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
                   ),
                   style: FilledButton.styleFrom(
-                    backgroundColor: const Color(0xFF2563EB),
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    foregroundColor: Theme.of(context).colorScheme.onPrimary,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -580,9 +580,9 @@ class _ProductCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: AppColors.surface,
+          color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.border.withValues(alpha: 0.6)),
+          border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.6)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -594,7 +594,7 @@ class _ProductCard extends StatelessWidget {
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
-                color: outOfStock ? AppColors.textSecondary : AppColors.text,
+                color: outOfStock ? Theme.of(context).colorScheme.onSurfaceVariant : Theme.of(context).colorScheme.onSurface,
               ),
             ),
             const SizedBox(height: 8),
@@ -603,7 +603,7 @@ class _ProductCard extends StatelessWidget {
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
-                color: outOfStock ? AppColors.textSecondary : AppColors.primary,
+                color: outOfStock ? Theme.of(context).colorScheme.onSurfaceVariant : Theme.of(context).colorScheme.primary,
               ),
             ),
             const Spacer(),
@@ -612,14 +612,14 @@ class _ProductCard extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Icon(Icons.inventory_2_outlined, size: 16, color: AppColors.textSecondary),
+                    Icon(Icons.inventory_2_outlined, size: 16, color: Theme.of(context).colorScheme.onSurfaceVariant),
                     const SizedBox(width: 4),
                     Text(
                       '${product.stock} stok',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w500,
-                        color: AppColors.textSecondary,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                     ),
                   ],
@@ -629,20 +629,20 @@ class _ProductCard extends StatelessWidget {
                   height: 32,
                   decoration: BoxDecoration(
                     color: outOfStock
-                        ? AppColors.border
+                        ? Theme.of(context).colorScheme.outlineVariant
                         : isInCart
-                            ? AppColors.primary
-                            : AppColors.primary.withValues(alpha: 0.1),
+                            ? Theme.of(context).colorScheme.primary
+                            : Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
                     outOfStock ? Icons.block : Icons.add,
                     size: 20,
                     color: outOfStock
-                        ? AppColors.textSecondary
+                        ? Theme.of(context).colorScheme.onSurfaceVariant
                         : isInCart
-                            ? AppColors.surface
-                            : AppColors.primary,
+                            ? Theme.of(context).colorScheme.surface
+                            : Theme.of(context).colorScheme.primary,
                   ),
                 ),
               ],

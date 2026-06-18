@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/constants/app_colors.dart';
 import '../../core/helpers/formatters.dart';
 import '../../main_shell.dart';
 import '../product/product_form_screen.dart';
@@ -11,38 +10,53 @@ import 'providers/dashboard_provider.dart';
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
 
+  String _getGreeting() {
+    final hour = DateTime.now().hour;
+    if (hour < 11) {
+      return 'Halo, Selamat Pagi!';
+    } else if (hour < 15) {
+      return 'Halo, Selamat Siang!';
+    } else if (hour < 18) {
+      return 'Halo, Selamat Sore!';
+    } else {
+      return 'Halo, Selamat Malam!';
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final asyncData = ref.watch(dashboardProvider);
 
     return Scaffold(
-      backgroundColor: AppColors.background,
       appBar: AppBar(
-        backgroundColor: AppColors.surface,
         elevation: 0,
         scrolledUnderElevation: 0,
         toolbarHeight: 64,
         title: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const Icon(Icons.storefront, color: AppColors.primary, size: 28),
+            Icon(Icons.storefront, color: Theme.of(context).colorScheme.primary, size: 36),
             const SizedBox(width: 12),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text(
-                  'Halo, Selamat Pagi!',
+                Text(
+                  _getGreeting(),
                   style: TextStyle(
                     fontSize: 12,
+                    height: 1.2,
                     fontWeight: FontWeight.w500,
-                    color: AppColors.textSecondary,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                 ),
                 Text(
                   'KikiaStore',
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: AppColors.primary,
+                    height: 1.2,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
               ],
@@ -51,9 +65,9 @@ class DashboardScreen extends ConsumerWidget {
         ),
         actions: [
           IconButton(
-            icon: const Icon(
-              Icons.account_circle,
-              color: AppColors.primary,
+            icon: Icon(
+              Icons.settings,
+              color: Theme.of(context).colorScheme.primary,
               size: 28,
             ),
             tooltip: 'Pengaturan',
@@ -68,7 +82,7 @@ class DashboardScreen extends ConsumerWidget {
         ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
-          child: Container(color: AppColors.border, height: 1),
+          child: Container(color: Theme.of(context).colorScheme.outlineVariant, height: 1),
         ),
       ),
       body: asyncData.when(
@@ -81,14 +95,14 @@ class DashboardScreen extends ConsumerWidget {
             children: [
               const SizedBox(height: 8),
               // Akses Cepat
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 4),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
                 child: Text(
                   'Akses Cepat',
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.textSecondary,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                 ),
               ),
@@ -101,7 +115,7 @@ class DashboardScreen extends ConsumerWidget {
                         ref.read(mainShellIndexProvider.notifier).state =
                             2; // Index for Kasir
                       },
-                      icon: const Icon(Icons.add_shopping_cart, size: 20),
+                      icon: Icon(Icons.add_shopping_cart, size: 20),
                       label: const Text(
                         'Transaksi Baru',
                         style: TextStyle(
@@ -128,7 +142,7 @@ class DashboardScreen extends ConsumerWidget {
                           ),
                         );
                       },
-                      icon: const Icon(Icons.add_box, size: 20),
+                      icon: Icon(Icons.add_box, size: 20),
                       label: const Text(
                         'Tambah Barang',
                         style: TextStyle(
@@ -138,8 +152,8 @@ class DashboardScreen extends ConsumerWidget {
                       ),
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 14),
-                        foregroundColor: AppColors.primary,
-                        side: const BorderSide(color: AppColors.border),
+                        foregroundColor: Theme.of(context).colorScheme.primary,
+                        side: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -155,7 +169,7 @@ class DashboardScreen extends ConsumerWidget {
                 label: 'Omzet Hari Ini',
                 value: Formatters.rupiah(data.todayRevenue),
                 icon: Icons.trending_up,
-                color: AppColors.primary,
+                color: Theme.of(context).colorScheme.primary,
                 showGraph: true,
                 isProfitGraph: false,
               ),
@@ -164,7 +178,7 @@ class DashboardScreen extends ConsumerWidget {
                 label: 'Profit Hari Ini',
                 value: Formatters.rupiah(data.todayProfit),
                 icon: Icons.account_balance_wallet,
-                color: AppColors.success,
+                color: (Theme.of(context).brightness == Brightness.dark ? Color(0xFF4ADE80) : Color(0xFF16A34A)),
                 showGraph: true,
                 isProfitGraph: true,
               ),
@@ -173,14 +187,14 @@ class DashboardScreen extends ConsumerWidget {
                 label: 'Transaksi Hari Ini',
                 value: '${data.todayTransactionCount}',
                 icon: Icons.receipt_long,
-                color: AppColors.warning,
+                color: (Theme.of(context).brightness == Brightness.dark ? Color(0xFFFBBF24) : Color(0xFFD97706)),
               ),
               const SizedBox(height: 12),
               _SummaryCard(
                 label: 'Produk Aktif',
                 value: '${data.activeProductCount}',
                 icon: Icons.inventory_2,
-                color: AppColors.textSecondary,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
               const SizedBox(height: 24),
             ],
@@ -213,12 +227,14 @@ class _SummaryCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
+            color: Theme.of(context).brightness == Brightness.dark
+                ? Colors.transparent
+                : Colors.black.withValues(alpha: 0.02),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -242,19 +258,19 @@ class _SummaryCard extends StatelessWidget {
               children: [
                 Text(
                   label,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
-                    color: AppColors.textSecondary,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   value,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.text,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
               ],

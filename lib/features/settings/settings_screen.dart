@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart' as package_info_plus;
-
-import '../../core/constants/app_colors.dart';
+import '../../core/theme/theme_provider.dart';
 import '../update/models/update_info.dart' as update_info;
 import '../update/services/update_service.dart';
 import '../update/widgets/update_dialog.dart' as update_dialog;
@@ -76,17 +75,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     _populateControllers(settingsState);
 
     return Scaffold(
-      backgroundColor: AppColors.background,
       appBar: AppBar(
-        backgroundColor: AppColors.surface,
         elevation: 0,
         scrolledUnderElevation: 0,
-        iconTheme: const IconThemeData(color: AppColors.textSecondary),
         title: Text(
           'Pengaturan Toko',
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.bold,
-            color: AppColors.text,
           ),
         ),
       ),
@@ -99,10 +94,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             children: [
               Container(
                 decoration: BoxDecoration(
-                  color: AppColors.surface,
+                  color: Theme.of(context).colorScheme.surface,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: AppColors.border.withValues(alpha: 0.5),
+                    color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5),
                   ),
                 ),
                 padding: const EdgeInsets.all(16),
@@ -110,7 +105,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   children: [
                     TextFormField(
                       controller: _nameCtrl,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         labelText: 'Nama Toko',
                         border: OutlineInputBorder(),
                         prefixIcon: Icon(Icons.store),
@@ -125,7 +120,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     const SizedBox(height: 16),
                     TextFormField(
                       controller: _addressCtrl,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         labelText: 'Alamat Toko',
                         border: OutlineInputBorder(),
                         prefixIcon: Icon(Icons.location_on),
@@ -141,7 +136,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     const SizedBox(height: 16),
                     TextFormField(
                       controller: _phoneCtrl,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         labelText: 'Nomor Telepon',
                         border: OutlineInputBorder(),
                         prefixIcon: Icon(Icons.phone),
@@ -162,19 +157,25 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 height: 48,
                 child: FilledButton.icon(
                   style: FilledButton.styleFrom(
-                    backgroundColor: AppColors.primary,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
                   onPressed: _save,
-                  icon: const Icon(Icons.save),
+                  icon: Icon(Icons.save),
                   label: const Text(
                     'Simpan Pengaturan',
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
+              const SizedBox(height: 32),
+              const Text(
+                'Tampilan',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 16),
+              const _ThemeSettingsSection(),
               const SizedBox(height: 32),
               const Text(
                 'Aplikasi',
@@ -253,7 +254,7 @@ class _AppSettingsSectionState extends ConsumerState<_AppSettingsSection> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(e.toString().replaceAll('Exception: ', '')),
-            backgroundColor: AppColors.danger,
+            backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
       }
@@ -291,23 +292,25 @@ class _AppSettingsSectionState extends ConsumerState<_AppSettingsSection> {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.border.withValues(alpha: 0.5)),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5),
+        ),
       ),
       child: Column(
         children: [
           ListTile(
-            leading: const Icon(Icons.info_outline),
+            leading: Icon(Icons.info_outline),
             title: const Text('Versi Aplikasi'),
             subtitle: GestureDetector(
               onLongPress: _simulateUpdate,
               child: Text(_version),
             ),
           ),
-          const Divider(height: 1),
+          Divider(height: 1),
           ListTile(
-            leading: const Icon(Icons.system_update),
+            leading: Icon(Icons.system_update),
             title: const Text('Cek Pembaruan'),
             trailing: _isChecking
                 ? const SizedBox(
@@ -315,8 +318,79 @@ class _AppSettingsSectionState extends ConsumerState<_AppSettingsSection> {
                     height: 20,
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
-                : const Icon(Icons.chevron_right),
+                : Icon(Icons.chevron_right),
             onTap: _isChecking ? null : _checkUpdate,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ThemeSettingsSection extends ConsumerWidget {
+  const _ThemeSettingsSection();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final themeMode = ref.watch(themeProvider);
+
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5),
+        ),
+      ),
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                themeMode == ThemeMode.dark
+                    ? Icons.dark_mode
+                    : themeMode == ThemeMode.light
+                        ? Icons.light_mode
+                        : Icons.brightness_auto,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              const SizedBox(width: 12),
+              Text(
+                'Tema Aplikasi',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          SizedBox(
+            width: double.infinity,
+            child: SegmentedButton<ThemeMode>(
+              segments: const <ButtonSegment<ThemeMode>>[
+                ButtonSegment<ThemeMode>(
+                  value: ThemeMode.light,
+                  label: Text('Terang'),
+                  icon: Icon(Icons.light_mode_outlined),
+                ),
+                ButtonSegment<ThemeMode>(
+                  value: ThemeMode.dark,
+                  label: Text('Gelap'),
+                  icon: Icon(Icons.dark_mode_outlined),
+                ),
+                ButtonSegment<ThemeMode>(
+                  value: ThemeMode.system,
+                  label: Text('Sistem'),
+                  icon: Icon(Icons.brightness_auto_outlined),
+                ),
+              ],
+              selected: <ThemeMode>{themeMode},
+              onSelectionChanged: (Set<ThemeMode> newSelection) {
+                ref.read(themeProvider.notifier).setThemeMode(newSelection.first);
+              },
+            ),
           ),
         ],
       ),

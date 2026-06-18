@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/constants/app_colors.dart';
 import '../../core/helpers/formatters.dart';
 import '../../database/models.dart';
 import '../printer/receipt_pdf.dart';
@@ -20,22 +19,22 @@ class TransactionDetailScreen extends ConsumerWidget {
     final asyncDetail = ref.watch(transactionDetailProvider(transactionId));
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: AppColors.surface,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         elevation: 0,
         scrolledUnderElevation: 0,
-        iconTheme: const IconThemeData(color: AppColors.textSecondary),
+        iconTheme: IconThemeData(color: Theme.of(context).colorScheme.onSurfaceVariant),
         title: Text(
           'Detail Transaksi',
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: AppColors.text,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.share),
+            icon: Icon(Icons.share),
             onPressed: () async {
               final detail = asyncDetail.valueOrNull;
               if (detail == null) return;
@@ -82,9 +81,9 @@ class _DetailContent extends StatelessWidget {
       children: [
         Container(
           decoration: BoxDecoration(
-            color: AppColors.surface,
+            color: Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppColors.border.withValues(alpha: 0.5)),
+            border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5)),
           ),
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -95,16 +94,16 @@ class _DetailContent extends StatelessWidget {
               const SizedBox(height: 4),
               Text(Formatters.dateTime(transaction.createdAt),
                   style: theme.textTheme.bodySmall?.copyWith(
-                      color: AppColors.textSecondary)),
+                      color: Theme.of(context).colorScheme.onSurfaceVariant)),
             ],
           ),
         ),
         const SizedBox(height: 8),
         Container(
           decoration: BoxDecoration(
-            color: AppColors.surface,
+            color: Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppColors.border.withValues(alpha: 0.5)),
+            border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5)),
           ),
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -112,7 +111,7 @@ class _DetailContent extends StatelessWidget {
             children: [
               Text('Item',
                   style: theme.textTheme.titleSmall
-                      ?.copyWith(fontWeight: FontWeight.bold, color: AppColors.textSecondary)),
+                      ?.copyWith(fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurfaceVariant)),
               const SizedBox(height: 12),
               ...items.map(
                 (item) => Padding(
@@ -124,18 +123,18 @@ class _DetailContent extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(item.productName,
-                                style: const TextStyle(
+                                style: TextStyle(
                                     fontWeight: FontWeight.w600)),
                             const SizedBox(height: 2),
                             Text(
                                 '${item.qty} × ${Formatters.rupiah(item.sellingPrice)}',
                                 style: theme.textTheme.bodySmall?.copyWith(
-                                    color: AppColors.textSecondary)),
+                                    color: Theme.of(context).colorScheme.onSurfaceVariant)),
                           ],
                         ),
                       ),
                       Text(Formatters.rupiah(item.sellingPrice * item.qty),
-                          style: const TextStyle(
+                          style: TextStyle(
                               fontWeight: FontWeight.bold)),
                     ],
                   ),
@@ -147,21 +146,21 @@ class _DetailContent extends StatelessWidget {
         const SizedBox(height: 8),
         Container(
           decoration: BoxDecoration(
-            color: AppColors.surface,
+            color: Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppColors.border.withValues(alpha: 0.5)),
+            border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5)),
           ),
           padding: const EdgeInsets.all(16),
           child: Column(
             children: [
               _SummaryRow(label: 'Subtotal', value: transaction.subtotal),
-              const Divider(height: 24),
+              Divider(height: 24),
               _SummaryRow(
                   label: 'Tunai', value: transaction.payment),
               _SummaryRow(
                   label: 'Kembalian',
                   value: transaction.changeAmount),
-              const Divider(height: 24),
+              Divider(height: 24),
               _SummaryRow(
                   label: 'Total',
                   value: transaction.subtotal,
@@ -170,14 +169,14 @@ class _DetailContent extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text('Laba',
+                  Text('Laba',
                       style: TextStyle(
                           fontWeight: FontWeight.w600,
-                          color: AppColors.success)),
+                          color: (Theme.of(context).brightness == Brightness.dark ? Color(0xFF4ADE80) : Color(0xFF16A34A)))),
                   Text(Formatters.rupiah(transaction.totalProfit),
-                      style: const TextStyle(
+                      style: TextStyle(
                           fontWeight: FontWeight.w600,
-                          color: AppColors.success)),
+                          color: (Theme.of(context).brightness == Brightness.dark ? Color(0xFF4ADE80) : Color(0xFF16A34A)))),
                 ],
               ),
             ],
@@ -188,7 +187,7 @@ class _DetailContent extends StatelessWidget {
           height: 48,
           child: FilledButton.icon(
             style: FilledButton.styleFrom(
-              backgroundColor: AppColors.primary,
+              backgroundColor: Theme.of(context).colorScheme.primary,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -199,7 +198,7 @@ class _DetailContent extends StatelessWidget {
                 items: items,
               );
             },
-            icon: const Icon(Icons.share),
+            icon: Icon(Icons.share),
             label: const Text(
               'Share Struk PDF',
               style: TextStyle(fontWeight: FontWeight.bold),
