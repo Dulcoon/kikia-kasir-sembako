@@ -44,6 +44,10 @@ dependencies:
   printing: ^5.13.3
   share_plus: ^10.0.2
   shared_preferences: ^2.2.3
+  dio: ^5.9.2
+  package_info_plus: ^9.0.1
+  open_filex: ^4.7.0
+  permission_handler: ^12.0.3
 
 dev_dependencies:
   flutter_test:
