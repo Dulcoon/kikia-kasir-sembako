@@ -9,21 +9,18 @@ import 'package:permission_handler/permission_handler.dart';
 
 class UpdateService {
   // Gunakan branch dev untuk mengambil version.json sesuai repositori GitHub
-  static const String versionUrl = 'https://raw.githubusercontent.com/Dulcoon/kikia-kasir-sembako/dev/version.json';
-  
+  static const String versionUrl =
+      'https://raw.githubusercontent.com/Dulcoon/kikia-kasir-sembako/dev/version.json';
+
   static Future<void> checkForUpdate(BuildContext context) async {
     try {
       final dio = Dio();
       // Tambahkan header untuk mencegah caching
       final response = await dio.get(
         versionUrl,
-        options: Options(
-          headers: {
-            'Cache-Control': 'no-cache',
-          },
-        ),
+        options: Options(headers: {'Cache-Control': 'no-cache'}),
       );
-      
+
       var data = response.data;
       if (data is String) {
         data = jsonDecode(data);
@@ -48,7 +45,12 @@ class UpdateService {
     }
   }
 
-  static void _showUpdateDialog(BuildContext context, String version, String notes, String url) {
+  static void _showUpdateDialog(
+    BuildContext context,
+    String version,
+    String notes,
+    String url,
+  ) {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -64,10 +66,15 @@ class UpdateService {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Versi baru dari Kikia Store telah tersedia. Apakah Anda ingin memperbarui sekarang?'),
+                  const Text(
+                    'Versi baru dari Kikia Store telah tersedia. Apakah Anda ingin memperbarui sekarang?',
+                  ),
                   const SizedBox(height: 12),
                   if (notes.isNotEmpty) ...[
-                    const Text('Catatan Rilis:', style: TextStyle(fontWeight: FontWeight.bold)),
+                    const Text(
+                      'Catatan Rilis:',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
                     const SizedBox(height: 4),
                     Text(notes, style: const TextStyle(fontSize: 13)),
                   ],
@@ -75,8 +82,11 @@ class UpdateService {
                     const SizedBox(height: 16),
                     LinearProgressIndicator(value: progress),
                     const SizedBox(height: 8),
-                    Text('${(progress * 100).toStringAsFixed(0)}% Diunduh', style: const TextStyle(fontSize: 12)),
-                  ]
+                    Text(
+                      '${(progress * 100).toStringAsFixed(0)}% Diunduh',
+                      style: const TextStyle(fontSize: 12),
+                    ),
+                  ],
                 ],
               ),
               actions: [
@@ -86,58 +96,70 @@ class UpdateService {
                     child: const Text('Nanti'),
                   ),
                 ElevatedButton(
-                  onPressed: isDownloading ? null : () async {
-                    setState(() {
-                      isDownloading = true;
-                    });
-                    
-                    try {
-                      // Minta izin install aplikasi untuk Android 8+
-                      if (Platform.isAndroid) {
-                        await Permission.requestInstallPackages.request();
-                      }
-                      
-                      final tempDir = await getTemporaryDirectory();
-                      final savePath = '${tempDir.path}/app-update.apk';
-                      
-                      final dio = Dio();
-                      await dio.download(
-                        url,
-                        savePath,
-                        onReceiveProgress: (received, total) {
-                          if (total != -1) {
+                  onPressed: isDownloading
+                      ? null
+                      : () async {
+                          setState(() {
+                            isDownloading = true;
+                          });
+
+                          try {
+                            // Minta izin install aplikasi untuk Android 8+
+                            if (Platform.isAndroid) {
+                              await Permission.requestInstallPackages.request();
+                            }
+
+                            final tempDir = await getTemporaryDirectory();
+                            final savePath = '${tempDir.path}/app-update.apk';
+
+                            final dio = Dio();
+                            await dio.download(
+                              url,
+                              savePath,
+                              onReceiveProgress: (received, total) {
+                                if (total != -1) {
+                                  setState(() {
+                                    progress = received / total;
+                                  });
+                                }
+                              },
+                            );
+
+                            if (context.mounted) {
+                              Navigator.pop(
+                                context,
+                              ); // Tutup dialog setelah selesai
+                            }
+
+                            // Buka APK untuk diinstal
+                            final result = await OpenFilex.open(savePath);
+                            if (result.type != ResultType.done) {
+                              debugPrint(
+                                'Gagal membuka APK: ${result.message}',
+                              );
+                            }
+                          } catch (e) {
                             setState(() {
-                              progress = received / total;
+                              isDownloading = false;
                             });
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    'Gagal mengunduh pembaruan: $e',
+                                  ),
+                                ),
+                              );
+                            }
                           }
                         },
-                      );
-                      
-                      if (context.mounted) {
-                        Navigator.pop(context); // Tutup dialog setelah selesai
-                      }
-                      
-                      // Buka APK untuk diinstal
-                      final result = await OpenFilex.open(savePath);
-                      if (result.type != ResultType.done) {
-                        debugPrint('Gagal membuka APK: ${result.message}');
-                      }
-                    } catch (e) {
-                      setState(() {
-                        isDownloading = false;
-                      });
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Gagal mengunduh pembaruan: $e')),
-                        );
-                      }
-                    }
-                  },
-                  child: Text(isDownloading ? 'Mengunduh...' : 'Update Sekarang'),
+                  child: Text(
+                    isDownloading ? 'Mengunduh...' : 'Update Sekarang',
+                  ),
                 ),
               ],
             );
-          }
+          },
         );
       },
     );
