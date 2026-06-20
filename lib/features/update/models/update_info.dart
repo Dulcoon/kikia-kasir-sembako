@@ -18,7 +18,7 @@ class UpdateInfo {
       version: json['version'] as String? ?? '1.0.0',
       buildNumber: json['build_number'] as int? ?? 1,
       forceUpdate: json['force_update'] as bool? ?? false,
-      apkUrl: json['apk_url'] as String? ?? '',
+      apkUrl: (json['download_url'] ?? json['apk_url']) as String? ?? '',
       changelog: (json['changelog'] as List<dynamic>?)
               ?.map((e) => e.toString())
               .toList() ??
