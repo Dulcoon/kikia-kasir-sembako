@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:excel/excel.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -26,6 +27,9 @@ class ExcelExportService {
     required String storeName,
     required DateTime month,
   }) async {
+    // Pastikan locale id_ID sudah diinisialisasi
+    await initializeDateFormatting('id_ID');
+
     // Rentang bulan
     final start = DateTime(month.year, month.month, 1);
     final end = DateTime(month.year, month.month + 1, 1);
