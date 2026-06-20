@@ -1,6 +1,11 @@
 {
-  "version": "1.0.2",
-  "build_number": 2,
-  "download_url": "https://github.com/Dulcoon/kikia-kasir-sembako/releases/download/1.0.2/app-release.apk",
-  "release_notes": "Mengimplementasikan Mode Gelap, memperbaiki bug kasir, dan menyempurnakan ikon aplikasi."
+  "version": "1.0.0",
+  "build_number": 3,
+  "download_url": "https://github.com/Dulcoon/kikia-kasir-sembako/releases/download/1.0.3/app-release-v1.0.3.apk",
+  "changelog": [
+    "Fitur baru: Ekspor laporan bulanan ke Excel langsung ke folder Download.",
+    "Fitur baru: Menu hapus semua data transaksi dengan konfirmasi aman.",
+    "Peningkatan UI: Halaman pengaturan kini lebih rapi dan terstruktur.",
+    "Perbaikan: Penggantian ikon profil menjadi ikon pengaturan yang sesuai."
+  ]
 }
