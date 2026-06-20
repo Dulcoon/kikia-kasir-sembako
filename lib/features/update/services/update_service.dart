@@ -86,14 +86,13 @@ class UpdateService {
         throw Exception('Gagal membuka file instalasi: ${result.message}');
       }
     } on DioException catch (e) {
-       if (e.type == DioExceptionType.connectionTimeout || 
-          e.type == DioExceptionType.connectionError ||
-          e.type == DioExceptionType.unknown) {
-        throw Exception('Koneksi internet terputus saat mengunduh.');
+      if (e.type == DioExceptionType.connectionTimeout || 
+          e.type == DioExceptionType.connectionError) {
+        throw Exception('Koneksi internet bermasalah. Pastikan sinyal stabil.');
       }
-      throw Exception('Gagal mengunduh pembaruan: ${e.message}');
+      throw Exception('Gagal mengunduh (Code: ${e.response?.statusCode}): ${e.message} \nDetail: ${e.error}');
     } catch (e) {
-      throw Exception(e.toString());
+      throw Exception('Error tak terduga: $e');
     }
   }
 }
