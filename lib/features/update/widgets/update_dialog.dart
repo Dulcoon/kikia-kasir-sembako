@@ -34,7 +34,7 @@ class _UpdateDialogState extends ConsumerState<UpdateDialog> {
           });
         },
       );
-      
+
       // Jika berhasil membuka APK, tutup dialog (meskipun install akan overlay)
       if (mounted) {
         Navigator.of(context).pop();
@@ -43,7 +43,7 @@ class _UpdateDialogState extends ConsumerState<UpdateDialog> {
       setState(() {
         _isDownloading = false;
         // Hapus tulisan "Exception: " jika ada
-        _error = e.toString().replaceAll('Exception: ', ''); 
+        _error = e.toString().replaceAll('Exception: ', '');
       });
     }
   }
@@ -63,7 +63,11 @@ class _UpdateDialogState extends ConsumerState<UpdateDialog> {
             children: [
               Row(
                 children: [
-                  Icon(Icons.system_update, color: Theme.of(context).colorScheme.primary, size: 32),
+                  Icon(
+                    Icons.system_update,
+                    color: Theme.of(context).colorScheme.primary,
+                    size: 32,
+                  ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
@@ -80,7 +84,9 @@ class _UpdateDialogState extends ConsumerState<UpdateDialog> {
               const SizedBox(height: 16),
               Text(
                 'Versi ${widget.updateInfo.version} sudah tersedia. ${widget.updateInfo.forceUpdate ? "Pembaruan ini wajib dilakukan." : "Apakah Anda ingin memperbarui sekarang?"}',
-                style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
               ),
               const SizedBox(height: 16),
               if (widget.updateInfo.changelog.isNotEmpty) ...[
@@ -98,29 +104,44 @@ class _UpdateDialogState extends ConsumerState<UpdateDialog> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: widget.updateInfo.changelog
-                        .map((e) => Text('• $e', style: TextStyle(fontSize: 13)))
+                        .map(
+                          (e) => Text('• $e', style: TextStyle(fontSize: 13)),
+                        )
                         .toList(),
                   ),
                 ),
                 const SizedBox(height: 24),
               ],
-              
+
               if (_error != null) ...[
-                 Container(
+                Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.error.withValues(alpha: 0.1),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.error.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Theme.of(context).colorScheme.error.withValues(alpha: 0.3)),
+                    border: Border.all(
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.error.withValues(alpha: 0.3),
+                    ),
                   ),
                   child: Row(
                     children: [
-                      Icon(Icons.error_outline, color: Theme.of(context).colorScheme.error, size: 20),
+                      Icon(
+                        Icons.error_outline,
+                        color: Theme.of(context).colorScheme.error,
+                        size: 20,
+                      ),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
                           _error!,
-                          style: TextStyle(color: Theme.of(context).colorScheme.error, fontSize: 13),
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.error,
+                            fontSize: 13,
+                          ),
                         ),
                       ),
                     ],
@@ -150,11 +171,20 @@ class _UpdateDialogState extends ConsumerState<UpdateDialog> {
                     if (!widget.updateInfo.forceUpdate)
                       TextButton(
                         onPressed: () => Navigator.of(context).pop(),
-                        child: Text('Nanti Saja', style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
+                        child: Text(
+                          'Nanti Saja',
+                          style: TextStyle(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
+                          ),
+                        ),
                       ),
                     const SizedBox(width: 8),
                     FilledButton(
-                      style: FilledButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.primary),
+                      style: FilledButton.styleFrom(
+                        backgroundColor: Theme.of(context).colorScheme.primary,
+                      ),
                       onPressed: _startUpdate,
                       child: const Text('Update Sekarang'),
                     ),

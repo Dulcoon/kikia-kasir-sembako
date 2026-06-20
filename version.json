@@ -1,11 +1,8 @@
 {
-  "version": "1.0.3",
-  "build_number": 3,
-  "download_url": "https://github.com/Dulcoon/kikia-kasir-sembako/releases/download/1.0.3/app-release-v1.0.3.apk",
+  "version": "1.0.4",
+  "build_number": 4,
+  "download_url": "https://github.com/Dulcoon/kikia-kasir-sembako/releases/download/1.0.4/app-release.apk",
   "changelog": [
-    "Fitur baru: Ekspor laporan bulanan ke Excel langsung ke folder Download.",
-    "Fitur baru: Menu hapus semua data transaksi dengan konfirmasi aman.",
-    "Peningkatan UI: Halaman pengaturan kini lebih rapi dan terstruktur.",
-    "Perbaikan: Penggantian ikon profil menjadi ikon pengaturan yang sesuai."
+    "Fitur Baru: Tambahan tombol 'Uang Pas' dan Nominal Uang Indonesia pada saat pembayaran agar kasir lebih cepat."
   ]
 }
