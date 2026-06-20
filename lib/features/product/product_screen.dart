@@ -40,7 +40,7 @@ class _ProductScreenState extends ConsumerState<ProductScreen> {
           ),
           actions: [
             IconButton(
-              icon: Icon(Icons.account_circle_outlined, color: Theme.of(context).colorScheme.onSurfaceVariant, size: 28),
+              icon: Icon(Icons.settings_outlined, color: Theme.of(context).colorScheme.onSurfaceVariant, size: 28),
               onPressed: () {
                 Navigator.push(context, MaterialPageRoute(builder: (_) => const SettingsScreen()));
               },

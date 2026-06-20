@@ -260,4 +260,41 @@ class TransactionRepository {
 
     return transaction;
   }
+
+  /// Ambil semua transaksi beserta item-itemnya dalam rentang tanggal tertentu
+  Future<List<Map<String, dynamic>>> getAllWithItems({
+    required DateTime start,
+    required DateTime end,
+  }) async {
+    final db = await DbHelper.database;
+    final rows = await db.rawQuery('''
+      SELECT
+        t.id            AS tx_id,
+        t.invoice_number,
+        t.subtotal,
+        t.payment,
+        t.change_amount,
+        t.total_profit,
+        t.created_at    AS tx_created_at,
+        ti.product_name,
+        ti.qty,
+        ti.selling_price,
+        ti.cost_price,
+        ti.profit       AS item_profit
+      FROM transactions t
+      LEFT JOIN transaction_items ti ON ti.transaction_id = t.id
+      WHERE t.created_at >= ? AND t.created_at < ?
+      ORDER BY t.created_at ASC, ti.id ASC
+    ''', [start.millisecondsSinceEpoch, end.millisecondsSinceEpoch]);
+    return rows.map((r) => Map<String, dynamic>.from(r)).toList();
+  }
+
+  Future<void> deleteAll() async {
+    final db = await DbHelper.database;
+    await db.transaction((txn) async {
+      // Delete child first to avoid FK constraint issues (though CASCADE is ON, it's safer)
+      await txn.delete('transaction_items');
+      await txn.delete('transactions');
+    });
+  }
 }

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/theme_provider.dart';
 import '../../core/utils/toast_helper.dart';
-import '../update/services/update_service.dart';
 import '../update/screens/update_screen.dart';
+import '../transaction/providers/transaction_provider.dart';
 import 'providers/settings_provider.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
@@ -76,7 +76,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         elevation: 0,
         scrolledUnderElevation: 0,
         title: Text(
-          'Pengaturan Toko',
+          'Pengaturan',
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.bold,
           ),
@@ -89,6 +89,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              const Text(
+                'Informasi Toko',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 16),
               Container(
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.surface,
@@ -180,6 +185,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               ),
               const SizedBox(height: 16),
               const _AppSettingsSection(),
+              const SizedBox(height: 32),
+              const Text(
+                'Data',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 16),
+              const _DataSettingsSection(),
             ],
           ),
         ),
@@ -283,6 +295,114 @@ class _ThemeSettingsSection extends ConsumerWidget {
                 ref.read(themeProvider.notifier).setThemeMode(newSelection.first);
               },
             ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DataSettingsSection extends ConsumerStatefulWidget {
+  const _DataSettingsSection();
+
+  @override
+  ConsumerState<_DataSettingsSection> createState() => _DataSettingsSectionState();
+}
+
+class _DataSettingsSectionState extends ConsumerState<_DataSettingsSection> {
+  Future<void> _confirmDelete() async {
+    final TextEditingController confirmController = TextEditingController();
+    
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Hapus Semua Transaksi?'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Tindakan ini akan menghapus permanen seluruh riwayat transaksi Anda. Stok barang tidak akan berubah.',
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'Ketik "yakin" untuk melanjutkan:',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              TextField(
+                controller: confirmController,
+                decoration: InputDecoration(
+                  hintText: 'yakin',
+                  border: OutlineInputBorder(),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Theme.of(context).colorScheme.error, width: 2),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Batal'),
+            ),
+            FilledButton.tonal(
+              style: FilledButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.error),
+              onPressed: () {
+                if (confirmController.text.trim().toLowerCase() == 'yakin') {
+                  Navigator.pop(context, true);
+                } else {
+                  ToastHelper.error(context, 'Kata konfirmasi salah');
+                }
+              },
+              child: const Text('Hapus Semua', style: TextStyle(color: Colors.white)),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (result == true) {
+      try {
+        final repo = ref.read(transactionRepositoryProvider);
+        await repo.deleteAll();
+        
+        // Refresh transaction list
+        ref.invalidate(transactionListProvider);
+        
+        if (mounted) {
+          ToastHelper.success(context, 'Seluruh data transaksi berhasil dihapus');
+        }
+      } catch (e) {
+        if (mounted) {
+          ToastHelper.error(context, 'Gagal menghapus data: $e');
+        }
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.errorContainer.withValues(alpha: 0.2),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.error.withValues(alpha: 0.3),
+        ),
+      ),
+      child: Column(
+        children: [
+          ListTile(
+            leading: Icon(Icons.delete_forever, color: Theme.of(context).colorScheme.error),
+            title: Text(
+              'Hapus Semua Data Transaksi',
+              style: TextStyle(color: Theme.of(context).colorScheme.error, fontWeight: FontWeight.bold),
+            ),
+            subtitle: const Text('Tindakan ini tidak bisa dibatalkan'),
+            onTap: _confirmDelete,
           ),
         ],
       ),

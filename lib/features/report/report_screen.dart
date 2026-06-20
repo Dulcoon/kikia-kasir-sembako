@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/helpers/formatters.dart';
+import '../../core/helpers/preferences_helper.dart';
+import '../../core/services/excel_export_service.dart';
+import '../../core/utils/toast_helper.dart';
 import '../../database/models.dart';
+import '../transaction/providers/transaction_provider.dart';
 import 'providers/report_provider.dart';
 
 class ReportScreen extends ConsumerWidget {
@@ -27,6 +31,13 @@ class ReportScreen extends ConsumerWidget {
                 color: Theme.of(context).colorScheme.onSurface,
               ),
         ),
+        actions: [
+          IconButton(
+            tooltip: 'Ekspor ke Excel',
+            icon: const Icon(Icons.table_chart_outlined),
+            onPressed: () => _showExportDialog(context, ref),
+          ),
+        ],
       ),
       body: asyncData.when(
         loading: () => const Center(child: CircularProgressIndicator()),
@@ -128,6 +139,164 @@ class ReportScreen extends ConsumerWidget {
       ),
     );
   }
+}
+
+/// Tampilkan dialog pemilih bulan lalu export ke Excel
+Future<void> _showExportDialog(BuildContext context, WidgetRef ref) async {
+  final now = DateTime.now();
+
+  // Opsi bulan: bulan ini + 11 bulan sebelumnya
+  final months = List.generate(12, (i) {
+    return DateTime(now.year, now.month - i, 1);
+  });
+
+  DateTime selectedMonth = months[0];
+
+  await showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    ),
+    builder: (ctx) {
+      return StatefulBuilder(
+        builder: (ctx, setModalState) {
+          return Padding(
+            padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: Theme.of(ctx).colorScheme.outlineVariant,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Text(
+                  'Ekspor Laporan Excel',
+                  style: Theme.of(ctx).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Pilih bulan yang ingin diekspor',
+                  style: Theme.of(ctx).textTheme.bodyMedium?.copyWith(
+                    color: Theme.of(ctx).colorScheme.onSurfaceVariant,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                // Dropdown bulan
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Theme.of(ctx).colorScheme.outlineVariant),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<DateTime>(
+                      isExpanded: true,
+                      value: selectedMonth,
+                      borderRadius: BorderRadius.circular(12),
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      items: months.map((m) {
+                        final label = '${_monthName(m.month)} ${m.year}${m.year == now.year && m.month == now.month ? ' (Bulan Ini)' : ''}';
+                        return DropdownMenuItem(value: m, child: Text(label));
+                      }).toList(),
+                      onChanged: (v) {
+                        if (v != null) setModalState(() => selectedMonth = v);
+                      },
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                // Info sheet
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Theme.of(ctx).colorScheme.primaryContainer.withValues(alpha: 0.4),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.info_outline, size: 16, color: Theme.of(ctx).colorScheme.primary),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          'File .xlsx berisi 3 sheet: Ringkasan, Riwayat Transaksi, dan Produk Terlaris.',
+                          style: Theme.of(ctx).textTheme.bodySmall?.copyWith(
+                            color: Theme.of(ctx).colorScheme.onPrimaryContainer,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 24),
+                SizedBox(
+                  width: double.infinity,
+                  height: 52,
+                  child: FilledButton.icon(
+                    style: FilledButton.styleFrom(
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                    icon: const Icon(Icons.download_rounded),
+                    label: const Text('Unduh Laporan', style: TextStyle(fontWeight: FontWeight.bold)),
+                    onPressed: () async {
+                      Navigator.pop(ctx);
+                      await _doExport(context, ref, selectedMonth);
+                    },
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      );
+    },
+  );
+}
+
+Future<void> _doExport(BuildContext context, WidgetRef ref, DateTime month) async {
+  // Show loading
+  final messenger = ScaffoldMessenger.of(context);
+  messenger.showSnackBar(
+    const SnackBar(
+      content: Row(children: [
+        SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)),
+        SizedBox(width: 12),
+        Text('Menyiapkan file Excel...'),
+      ]),
+      duration: Duration(seconds: 10),
+    ),
+  );
+
+  try {
+    final repo = ref.read(transactionRepositoryProvider);
+    final storeName = await PreferencesHelper.getStoreName();
+    await ExcelExportService.exportMonthly(
+      repo: repo,
+      storeName: storeName,
+      month: month,
+    );
+    messenger.hideCurrentSnackBar();
+  } catch (e) {
+    messenger.hideCurrentSnackBar();
+    if (context.mounted) {
+      ToastHelper.error(context, 'Gagal mengekspor: $e');
+    }
+  }
+}
+
+String _monthName(int month) {
+  const names = [
+    '', 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+    'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember',
+  ];
+  return names[month];
 }
 
 class _FilterBar extends StatelessWidget {
