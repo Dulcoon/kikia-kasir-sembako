@@ -3,8 +3,9 @@ import 'dart:io';
 import 'package:excel/excel.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
+import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:share_plus/share_plus.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../../database/models.dart';
 import '../../database/transaction_repository.dart';
@@ -66,23 +67,45 @@ class ExcelExportService {
     final productSheet = excel['Produk Terlaris'];
     _addTopProductSheet(sheet: productSheet, topProducts: topProducts);
 
-    // Hapus sheet default "Sheet1" jika ada
-    excel.delete('Sheet1');
-
-    // Simpan ke file sementara
-    final dir = await getTemporaryDirectory();
     final fileName =
         '${storeName.replaceAll(' ', '_')}_Laporan_${_fileMonthFormat.format(month)}.xlsx';
-    final file = File('${dir.path}/$fileName');
+
+    Directory? dir;
+    if (Platform.isAndroid) {
+      // Minta izin storage untuk Android versi lama
+      await Permission.storage.request();
+      
+      dir = Directory('/storage/emulated/0/Download');
+      if (!await dir.exists()) {
+        dir = await getExternalStorageDirectory();
+      }
+    } else {
+      dir = await getApplicationDocumentsDirectory();
+    }
+
+    if (dir == null) {
+      throw Exception('Gagal menemukan direktori penyimpanan');
+    }
+
+    // Pastikan nama file unik jika sudah ada
+    File file = File('${dir.path}/$fileName');
+    int counter = 1;
+    while (await file.exists()) {
+      final newName = '${storeName.replaceAll(' ', '_')}_Laporan_${_fileMonthFormat.format(month)}_($counter).xlsx';
+      file = File('${dir.path}/$newName');
+      counter++;
+    }
+
     final bytes = excel.encode();
     if (bytes == null) throw Exception('Gagal menyusun file Excel');
     await file.writeAsBytes(bytes);
 
-    // Share / Save ke Downloads
-    await Share.shareXFiles(
-      [XFile(file.path, mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')],
-      subject: 'Laporan ${_monthFormat.format(month)} – $storeName',
-    );
+    // Buka file secara otomatis setelah disimpan
+    final result = await OpenFilex.open(file.path);
+    if (result.type != ResultType.done) {
+      // Jika tidak ada aplikasi untuk membuka, biarkan tersimpan saja
+      throw Exception('File tersimpan di folder Download, namun tidak ada aplikasi untuk membukanya.');
+    }
   }
 
   // ── Helper: Sheet Ringkasan ─────────────────────────────────────────────────
