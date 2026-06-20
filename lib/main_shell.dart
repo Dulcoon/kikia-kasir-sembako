@@ -6,7 +6,6 @@ import '../features/dashboard/dashboard_screen.dart';
 import '../features/product/product_screen.dart';
 import '../features/report/report_screen.dart';
 import '../features/transaction/transaction_screen.dart';
-import 'core/services/update_service.dart';
 
 final mainShellIndexProvider = StateProvider<int>((ref) => 0);
 
@@ -29,9 +28,8 @@ class _MainShellState extends ConsumerState<MainShell> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      UpdateService.checkForUpdate(context);
-    });
+    // Jika Anda ingin mengecek otomatis saat awal, panggil service yang asli di sini
+    // (opsional: ref.read(updateServiceProvider).checkUpdate() dan munculkan dialog manual)
   }
 
   @override

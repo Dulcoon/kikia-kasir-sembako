@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -16,15 +17,19 @@ final updateServiceProvider = Provider<UpdateService>((ref) {
 class UpdateService {
   final Dio _dio = Dio(BaseOptions(connectTimeout: const Duration(seconds: 5)));
 
-  // URL placeholder. Ganti dengan URL JSON di server Anda nantinya.
-  final String _updateUrl = 'https://update.warungkasir.app/version.json';
+  // Menggunakan URL GitHub raw untuk version.json
+  final String _updateUrl = 'https://raw.githubusercontent.com/Dulcoon/kikia-kasir-sembako/dev/version.json';
 
   Future<UpdateInfo?> checkUpdate() async {
     try {
       final response = await _dio.get(_updateUrl);
       
       if (response.statusCode == 200) {
-        final serverUpdateInfo = UpdateInfo.fromJson(response.data);
+        var data = response.data;
+        if (data is String) {
+          data = jsonDecode(data);
+        }
+        final serverUpdateInfo = UpdateInfo.fromJson(data);
         
         final packageInfo = await PackageInfo.fromPlatform();
         final currentBuildNumber = int.tryParse(packageInfo.buildNumber) ?? 0;

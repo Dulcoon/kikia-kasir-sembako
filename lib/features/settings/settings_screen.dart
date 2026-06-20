@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:package_info_plus/package_info_plus.dart' as package_info_plus;
 import '../../core/theme/theme_provider.dart';
 import '../../core/utils/toast_helper.dart';
-import '../update/models/update_info.dart' as update_info;
 import '../update/services/update_service.dart';
-import '../update/widgets/update_dialog.dart' as update_dialog;
+import '../update/screens/update_screen.dart';
 import 'providers/settings_provider.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
@@ -190,95 +188,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   }
 }
 
-class _AppSettingsSection extends ConsumerStatefulWidget {
+class _AppSettingsSection extends StatelessWidget {
   const _AppSettingsSection();
-
-  @override
-  ConsumerState<_AppSettingsSection> createState() =>
-      _AppSettingsSectionState();
-}
-
-class _AppSettingsSectionState extends ConsumerState<_AppSettingsSection> {
-  String _version = 'Memuat...';
-  bool _isChecking = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadVersion();
-  }
-
-  Future<void> _loadVersion() async {
-    try {
-      final info = await package_info_plus.PackageInfo.fromPlatform();
-      if (mounted) {
-        setState(() {
-          _version = '${info.version} (Build ${info.buildNumber})';
-        });
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() {
-          _version = 'Tidak diketahui';
-        });
-      }
-    }
-  }
-
-  Future<void> _checkUpdate() async {
-    setState(() {
-      _isChecking = true;
-    });
-
-    try {
-      final service = ref.read(updateServiceProvider);
-      final updateInfo = await service.checkUpdate();
-
-      if (mounted) {
-        if (updateInfo != null) {
-          showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (context) =>
-                update_dialog.UpdateDialog(updateInfo: updateInfo),
-          );
-        } else {
-          ToastHelper.info(context, 'Aplikasi Anda sudah versi terbaru.');
-        }
-      }
-    } catch (e) {
-      if (mounted) {
-        ToastHelper.error(context, e.toString().replaceAll('Exception: ', ''));
-      }
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isChecking = false;
-        });
-      }
-    }
-  }
-
-  // Hidden feature for testing: long press on the version text to simulate update
-  void _simulateUpdate() {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => update_dialog.UpdateDialog(
-        updateInfo: update_info.UpdateInfo(
-          version: '9.9.9',
-          buildNumber: 999,
-          forceUpdate: false,
-          apkUrl:
-              'https://raw.githubusercontent.com/Dulcoon/kikia-kasir-sembako/main/dummy.apk', // Placeholder
-          changelog: [
-            'Ini adalah pembaruan simulasi (testing)',
-            'Progress bar akan muncul saat didownload',
-          ],
-        ),
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -293,25 +204,14 @@ class _AppSettingsSectionState extends ConsumerState<_AppSettingsSection> {
       child: Column(
         children: [
           ListTile(
-            leading: Icon(Icons.info_outline),
-            title: const Text('Versi Aplikasi'),
-            subtitle: GestureDetector(
-              onLongPress: _simulateUpdate,
-              child: Text(_version),
-            ),
-          ),
-          Divider(height: 1),
-          ListTile(
             leading: Icon(Icons.system_update),
-            title: const Text('Cek Pembaruan'),
-            trailing: _isChecking
-                ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : Icon(Icons.chevron_right),
-            onTap: _isChecking ? null : _checkUpdate,
+            title: const Text('Pembaruan Aplikasi'),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => const UpdateScreen()),
+              );
+            },
           ),
         ],
       ),
