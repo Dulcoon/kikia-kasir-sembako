@@ -135,10 +135,20 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
             const SizedBox(height: 12),
             Wrap(
               spacing: 8,
+              runSpacing: 8,
               children: [
+                ActionChip(
+                  backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+                  labelStyle: TextStyle(
+                    color: Theme.of(context).colorScheme.onPrimaryContainer,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  label: const Text('Uang Pas'),
+                  onPressed: () => _setQuickPayment(subtotal),
+                ),
                 for (final amt in _quickAmounts(subtotal))
                   ActionChip(
-                    label: Text(Formatters.rupiahRaw(amt)),
+                    label: Text(Formatters.rupiahRaw(amt.toDouble())),
                     onPressed: () => _setQuickPayment(amt.toDouble()),
                   ),
               ],
@@ -176,18 +186,30 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
 
   List<int> _quickAmounts(double subtotal) {
     final s = subtotal.toInt();
-    final candidates = <int>{s};
-    int step = s < 10000
-        ? 1000
-        : s < 100000
-            ? 5000
-            : 10000;
-    var v = ((s ~/ step) + 1) * step;
-    while (v <= s * 3 && candidates.length < 4) {
-      candidates.add(v);
-      v += step;
+    final candidates = <int>{};
+
+    // 1. Pecahan uang kertas standar Indonesia yang lebih besar dari total belanja
+    final standardNotes = [5000, 10000, 20000, 50000, 100000];
+    for (final note in standardNotes) {
+      if (note > s) {
+        candidates.add(note);
+      }
     }
-    return candidates.toList()..sort();
+
+    // 2. Pembulatan ke atas untuk kembalian logis (misal belanja 32.000 -> 35.000, 40.000)
+    if (s > 0) {
+      final next5k = ((s / 5000).ceil()) * 5000;
+      if (next5k > s) candidates.add(next5k);
+
+      final next10k = ((s / 10000).ceil()) * 10000;
+      if (next10k > s) candidates.add(next10k);
+
+      final next50k = ((s / 50000).ceil()) * 50000;
+      if (next50k > s) candidates.add(next50k);
+    }
+
+    final sorted = candidates.toList()..sort();
+    return sorted.take(4).toList(); // Tampilkan maksimal 4 nominal agar rapi
   }
 }
 
