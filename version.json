@@ -1,8 +1,10 @@
 {
-  "version": "1.0.4",
-  "build_number": 4,
-  "download_url": "https://github.com/Dulcoon/kikia-kasir-sembako/releases/download/1.0.4/app-release.apk",
+  "version": "1.0.5",
+  "build_number": 5,
+  "download_url": "https://github.com/Dulcoon/kikia-kasir-sembako/releases/download/1.0.5/app-release.apk",
   "changelog": [
-    "Fitur Baru: Tambahan tombol 'Uang Pas' dan Nominal Uang Indonesia pada saat pembayaran agar kasir lebih cepat."
+    "Fitur Baru: Tambahan kolom input Diskon / Potongan Harga nominal pada saat pembayaran di kasir.",
+    "Fitur Baru: Laporan detail transaksi dan struk cetak PDF sekarang menampilkan informasi potongan diskon.",
+    "Perbaikan Laporan: Ekspor Laporan Bulanan Excel sekarang menyertakan kolom Diskon Transaksi."
   ]
 }
