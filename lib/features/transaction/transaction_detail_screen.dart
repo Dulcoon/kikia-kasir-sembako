@@ -154,6 +154,12 @@ class _DetailContent extends StatelessWidget {
           child: Column(
             children: [
               _SummaryRow(label: 'Subtotal', value: transaction.subtotal),
+              if (transaction.discount > 0)
+                _SummaryRow(
+                  label: 'Diskon',
+                  value: -transaction.discount,
+                  color: Theme.of(context).colorScheme.error,
+                ),
               Divider(height: 24),
               _SummaryRow(
                   label: 'Tunai', value: transaction.payment),
@@ -163,7 +169,7 @@ class _DetailContent extends StatelessWidget {
               Divider(height: 24),
               _SummaryRow(
                   label: 'Total',
-                  value: transaction.subtotal,
+                  value: transaction.subtotal - transaction.discount,
                   bold: true),
               const SizedBox(height: 8),
               Row(
@@ -214,11 +220,13 @@ class _SummaryRow extends StatelessWidget {
   final String label;
   final double value;
   final bool bold;
+  final Color? color;
 
   const _SummaryRow({
     required this.label,
     required this.value,
     this.bold = false,
+    this.color,
   });
 
   @override
@@ -230,10 +238,12 @@ class _SummaryRow extends StatelessWidget {
         children: [
           Text(label,
               style: TextStyle(
-                  fontWeight: bold ? FontWeight.bold : FontWeight.w500)),
+                  fontWeight: bold ? FontWeight.bold : FontWeight.w500,
+                  color: color)),
           Text(Formatters.rupiah(value),
               style: TextStyle(
-                  fontWeight: bold ? FontWeight.bold : FontWeight.w500)),
+                  fontWeight: bold ? FontWeight.bold : FontWeight.w500,
+                  color: color)),
         ],
       ),
     );

@@ -199,7 +199,8 @@ class ExcelExportService {
       'Harga Jual',
       'Harga Modal',
       'Laba Item',
-      'Total Transaksi',
+      'Subtotal Transaksi',
+      'Diskon Transaksi',
       'Bayar',
       'Kembalian',
       'Total Laba Transaksi',
@@ -225,6 +226,7 @@ class ExcelExportService {
         DoubleCellValue((row['cost_price'] as num?)?.toDouble() ?? 0),
         DoubleCellValue((row['item_profit'] as num?)?.toDouble() ?? 0),
         DoubleCellValue((row['subtotal'] as num?)?.toDouble() ?? 0),
+        DoubleCellValue((row['discount'] as num?)?.toDouble() ?? 0),
         DoubleCellValue((row['payment'] as num?)?.toDouble() ?? 0),
         DoubleCellValue((row['change_amount'] as num?)?.toDouble() ?? 0),
         DoubleCellValue((row['total_profit'] as num?)?.toDouble() ?? 0),
@@ -232,7 +234,7 @@ class ExcelExportService {
     }
 
     // Lebar kolom
-    final widths = [20.0, 20.0, 25.0, 8.0, 15.0, 15.0, 15.0, 18.0, 15.0, 15.0, 22.0];
+    final widths = [20.0, 20.0, 25.0, 8.0, 15.0, 15.0, 15.0, 18.0, 18.0, 15.0, 15.0, 22.0];
     for (int i = 0; i < widths.length; i++) {
       sheet.setColumnWidth(i, widths[i]);
     }

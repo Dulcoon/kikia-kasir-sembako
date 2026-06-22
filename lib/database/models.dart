@@ -196,6 +196,7 @@ class Transaction {
   final String id;
   final String invoiceNumber;
   final double subtotal;
+  final double discount;
   final double payment;
   final double changeAmount;
   final double totalProfit;
@@ -205,6 +206,7 @@ class Transaction {
     required this.id,
     required this.invoiceNumber,
     required this.subtotal,
+    this.discount = 0,
     required this.payment,
     required this.changeAmount,
     required this.totalProfit,
@@ -215,6 +217,7 @@ class Transaction {
         'id': id,
         'invoice_number': invoiceNumber,
         'subtotal': subtotal,
+        'discount': discount,
         'payment': payment,
         'change_amount': changeAmount,
         'total_profit': totalProfit,
@@ -225,6 +228,7 @@ class Transaction {
         id: map['id'] as String,
         invoiceNumber: map['invoice_number'] as String,
         subtotal: (map['subtotal'] as num).toDouble(),
+        discount: map['discount'] != null ? (map['discount'] as num).toDouble() : 0,
         payment: (map['payment'] as num).toDouble(),
         changeAmount: (map['change_amount'] as num).toDouble(),
         totalProfit: (map['total_profit'] as num).toDouble(),

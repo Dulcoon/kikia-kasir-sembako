@@ -76,6 +76,28 @@ class ReceiptPdf {
             pw.Row(
               mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
               children: [
+                pw.Text('Subtotal', style: const pw.TextStyle(fontSize: 10)),
+                pw.Text(
+                  fmt.Formatters.rupiah(transaction.subtotal),
+                  style: const pw.TextStyle(fontSize: 10),
+                ),
+              ],
+            ),
+            if (transaction.discount > 0)
+              pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                children: [
+                  pw.Text('Diskon', style: const pw.TextStyle(fontSize: 10)),
+                  pw.Text(
+                    '- ${fmt.Formatters.rupiah(transaction.discount)}',
+                    style: const pw.TextStyle(fontSize: 10),
+                  ),
+                ],
+              ),
+            pw.SizedBox(height: 2),
+            pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+              children: [
                 pw.Text(
                   'TOTAL',
                   style: pw.TextStyle(
@@ -84,7 +106,7 @@ class ReceiptPdf {
                   ),
                 ),
                 pw.Text(
-                  fmt.Formatters.rupiah(transaction.subtotal),
+                  fmt.Formatters.rupiah(transaction.subtotal - transaction.discount),
                   style: pw.TextStyle(
                     fontSize: 14,
                     fontWeight: pw.FontWeight.bold,

@@ -50,6 +50,7 @@ class Migrations {
         id TEXT PRIMARY KEY,
         invoice_number TEXT NOT NULL UNIQUE,
         subtotal REAL NOT NULL DEFAULT 0,
+        discount REAL NOT NULL DEFAULT 0,
         payment REAL NOT NULL DEFAULT 0,
         change_amount REAL NOT NULL DEFAULT 0,
         total_profit REAL NOT NULL DEFAULT 0,
@@ -90,6 +91,15 @@ class Migrations {
     if (oldVersion < 2) {
       await _migrateV1ToV2(db);
     }
+    if (oldVersion < 3) {
+      await _migrateV2ToV3(db);
+    }
+  }
+
+  static Future<void> _migrateV2ToV3(Database db) async {
+    await db.execute(
+      'ALTER TABLE transactions ADD COLUMN discount REAL NOT NULL DEFAULT 0;',
+    );
   }
 
   static Future<void> _migrateV1ToV2(Database db) async {

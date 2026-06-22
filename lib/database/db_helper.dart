@@ -24,7 +24,7 @@ class DbHelper {
     final path = await _dbPath();
     final db = await openDatabase(
       path,
-      version: 2,
+      version: 3,
       onConfigure: (db) async {
         await db.execute('PRAGMA foreign_keys = ON;');
       },
@@ -73,6 +73,7 @@ class DbHelper {
         id TEXT PRIMARY KEY,
         invoice_number TEXT NOT NULL UNIQUE,
         subtotal REAL NOT NULL DEFAULT 0,
+        discount REAL NOT NULL DEFAULT 0,
         payment REAL NOT NULL DEFAULT 0,
         change_amount REAL NOT NULL DEFAULT 0,
         total_profit REAL NOT NULL DEFAULT 0,

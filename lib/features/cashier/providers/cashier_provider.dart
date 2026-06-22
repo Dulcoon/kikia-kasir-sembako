@@ -102,6 +102,7 @@ class CashierNotifier extends StateNotifier<CashierState> {
   Future<String> checkout({
     required double payment,
     required double changeAmount,
+    required double discount,
   }) async {
     final transactionRepo = ref.read(transactionRepositoryProvider);
     final productRepo = ref.read(productRepositoryProvider);
@@ -126,7 +127,7 @@ class CashierNotifier extends StateNotifier<CashierState> {
       sequence: seq,
     );
     final totalProfit =
-        state.cart.fold<double>(0, (sum, item) => sum + item.profit);
+        state.cart.fold<double>(0, (sum, item) => sum + item.profit) - discount;
 
     final transactionId = _uuid.v4();
     final items = state.cart
@@ -157,6 +158,7 @@ class CashierNotifier extends StateNotifier<CashierState> {
       transactionId: transactionId,
       invoiceNumber: invoiceNumber,
       subtotal: state.subtotal,
+      discount: discount,
       payment: payment,
       changeAmount: changeAmount,
       totalProfit: totalProfit,
